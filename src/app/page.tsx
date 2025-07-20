@@ -5,7 +5,7 @@ import RightSection from "./components/RightSection";
 const Home = () => {
   return (
     <div className="w-full h-full flex justify-center items-center relative bg-black">
-      <div className="max-w-[65vw] w-full h-full flex relative">
+      <div className="max-w-[80vw] w-full h-full flex relative">
         <LeftSidebar />
         <MainComponent />
         <RightSection />
