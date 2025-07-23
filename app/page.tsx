@@ -1,6 +1,4 @@
-import { EnvVarWarning } from "@/components/env-var-warning";
 import { AuthButton } from "@/components/auth-button";
-import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 
 export default function Home() {
@@ -13,7 +11,7 @@ export default function Home() {
               <Link href={"/"}>Next.js Supabase Starter</Link>
               <div className="flex items-center gap-2"></div>
             </div>
-            {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
+            <AuthButton />
           </div>
         </nav>
       </div>

@@ -8,7 +8,6 @@ import {
   BsTwitterX,
 } from "react-icons/bs";
 import Link from "next/link";
-import { hasEnvVars } from "@/lib/utils";
 import { EnvVarWarning } from "./env-var-warning";
 import { AuthButton } from "./auth-button";
 
@@ -51,7 +50,7 @@ const LeftSidebar = () => {
           <div className="flex items-center space-x-2">
             <div className="rounded-full bg-slate-400 w-10 h-10"></div>
             <div className="text-left text-sm">
-              {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
+              <AuthButton />
             </div>
           </div>
           <div>
