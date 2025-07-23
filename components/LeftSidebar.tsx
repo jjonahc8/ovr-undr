@@ -44,7 +44,7 @@ const LeftSidebar = () => {
         </button>
       </div>
       <div>
-        <button
+        <div
           className="rounded-full flex items-center space-x-2 bg-transparent p-4 text-center 
       hover:bg-white/10 transition duration-200 w-full justify-between"
         >
@@ -57,7 +57,7 @@ const LeftSidebar = () => {
           <div>
             <BsThreeDots />
           </div>
-        </button>
+        </div>
       </div>
     </section>
   );
