@@ -8,7 +8,7 @@ import {
   BsTwitterX,
 } from "react-icons/bs";
 import Link from "next/link";
-import { AuthButton } from "./auth-button";
+import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./logout-button";
 
 const NAVIGATION_ITEMS = [
@@ -21,7 +21,14 @@ const NAVIGATION_ITEMS = [
   { title: "Profile", icon: BiUser },
 ];
 
-const LeftSidebar = () => {
+export async function LeftSidebar() {
+  const supabase = await createClient();
+
+  // You can also use getUser() which will be slower.
+  const { data } = await supabase.auth.getClaims();
+
+  const user = data?.claims;
+
   return (
     <section className="w-[23%] sticky top-0 flex flex-col items-stretch h-screen">
       <div className="flex flex-col items-stretch h-full space-y-4 mt-4">
@@ -50,7 +57,7 @@ const LeftSidebar = () => {
           <div className="flex items-center space-x-3">
             <div className="rounded-full bg-slate-400 w-10 h-10"></div>
             <div className="text-left text-sm">
-              <AuthButton />
+              {user?.user_metadata.display_name}
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -61,6 +68,6 @@ const LeftSidebar = () => {
       </div>
     </section>
   );
-};
+}
 
 export default LeftSidebar;
