@@ -21,7 +21,7 @@ const RightSection = () => {
         </div>
       </div>
       <div className="flex flex-col rounded-xl bg-neutral-900 my-4">
-        <h3 className="font-bold text-xl my-4 px-4">What's happening</h3>
+        <h3 className="font-bold text-xl my-4 px-4">Popular plots</h3>
         <div>
           {Array.from({ length: 5 }).map((_, i) => (
             <div
@@ -35,7 +35,7 @@ const RightSection = () => {
         </div>
       </div>
       <div className="flex flex-col rounded-xl bg-neutral-900 my-4">
-        <h3 className="font-bold text-xl my-4 px-4">Who to follow</h3>
+        <h3 className="font-bold text-xl my-4 px-4">Bettors to watch</h3>
         <div>
           {Array.from({ length: 5 }).map((_, i) => (
             <div
