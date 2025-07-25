@@ -70,7 +70,7 @@ const MainComponent = async function () {
               <div>
                 <div className="w-10 h-10 bg-slate-200 rounded-full ml-2 mt-2" />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col w-full">
                 <div className="flex items-center w-full justify-between">
                   <div className="flex items-center w-full">
                     <div className="font-bold">
@@ -91,8 +91,8 @@ const MainComponent = async function () {
                   {tweets[timelineLength - 1 - i].text}
                 </div>
                 {/* need support for images */}
-                <div className="bg-slate-400 aspect-square w-full h-80 rounded-xl mt-2"></div>
-                <div className="flex items-center justify-start space-x-20 mt-2 w-full">
+                {/* <div className="bg-slate-400 aspect-square w-full h-80 rounded-xl mt-2"></div> */}
+                <div className="flex items-center justify-between space-x-20 mt-2 w-full">
                   <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
                     <BsChat />
                   </div>
@@ -101,9 +101,6 @@ const MainComponent = async function () {
                   </div>
                   <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
                     <AiOutlineHeart />
-                  </div>
-                  <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
-                    <IoStatsChart />
                   </div>
                   <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
                     <IoShareOutline />
