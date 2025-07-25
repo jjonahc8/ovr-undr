@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./logout-button";
+import { Button } from "./ui/button";
 
 const NAVIGATION_ITEMS = [
   { title: "Logo", icon: BsTwitterX },
@@ -17,7 +18,6 @@ const NAVIGATION_ITEMS = [
   { title: "Explore", icon: HiOutlineHashtag },
   { title: "Notifications", icon: BsBell },
   { title: "Messages", icon: BsEnvelope },
-  { title: "Bookmarks", icon: BsBookmark },
   { title: "Profile", icon: BiUser },
 ];
 
@@ -45,7 +45,10 @@ export async function LeftSidebar() {
             {item.title !== "Logo" && <div>{item.title}</div>}
           </Link>
         ))}
-        <button className="rounded-full m-4 bg-blue-500 p-4 text-2xl text-center hover:bg-blue-500/70 transition duration-200">
+        <button
+          className="rounded-full m-4 text-black bg-white p-4 text-2xl text-center hover:bg-white/70 transition duration-200
+        font-semibold"
+        >
           Tweet
         </button>
       </div>

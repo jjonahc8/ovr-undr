@@ -35,8 +35,8 @@ const ComposeTweet = () => {
         <div className="w-full max-w-[100px]">
           <button
             type="submit"
-            className="rounded-full bg-blue-500 px-4 py-2 w-full text-lg text-center hover:bg-blue-500/70 
-            transition duration-200 font-bold"
+            className="rounded-full text-black bg-white px-4 py-2 w-full text-lg text-center hover:bg-white/70 
+            transition duration-200 font-semibold"
           >
             Tweet
           </button>
