@@ -38,7 +38,7 @@ const ComposeTweet = () => {
             className="rounded-full text-black bg-white px-4 py-2 w-full text-lg text-center hover:bg-white/70 
             transition duration-200 font-semibold"
           >
-            Tweet
+            Plot
           </button>
         </div>
       </div>

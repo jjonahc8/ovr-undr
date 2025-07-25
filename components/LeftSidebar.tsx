@@ -49,7 +49,7 @@ export async function LeftSidebar() {
           className="rounded-full m-4 text-black bg-white p-4 text-2xl text-center hover:bg-white/70 transition duration-200
         font-semibold"
         >
-          Tweet
+          Plot
         </button>
       </div>
       <div>
