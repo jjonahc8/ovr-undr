@@ -1,6 +1,6 @@
 import { BsChat, BsDot, BsThreeDots } from "react-icons/bs";
 import { AiOutlineHeart, AiOutlineRetweet } from "react-icons/ai";
-import { IoShareOutline, IoStatsChart } from "react-icons/io5";
+import { IoShareOutline } from "react-icons/io5";
 import ComposeTweet from "./server-components/compose-tweet";
 import { createClient } from "@/lib/supabase/server";
 import { parseISO } from "date-fns";
