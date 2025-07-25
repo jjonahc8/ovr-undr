@@ -1,6 +1,7 @@
 import { BsChat, BsDot, BsThreeDots } from "react-icons/bs";
 import { AiOutlineHeart, AiOutlineRetweet } from "react-icons/ai";
 import { IoShareOutline, IoStatsChart } from "react-icons/io5";
+import ComposeTweet from "./server-components/compose-tweet";
 
 const MainComponent = () => {
   return (
@@ -13,25 +14,7 @@ const MainComponent = () => {
     relative"
       >
         <div className="w-11 h-11 bg-slate-400 rounded-full flex-none"></div>
-        <div className="flex flex-col w-full h-full">
-          <input
-            type="text"
-            className="w-full h-full text-2xl placeholder:text-gray-600 bg-transparent border-b-[0.5px] border-gray-600 p-4 
-          outline-none border-none"
-            placeholder="What's happening?"
-          />
-          <div className="w-full justify-between items-center flex">
-            <div></div>
-            <div className="w-full max-w-[100px]">
-              <button
-                className="rounded-full bg-blue-500 px-4 py-2 w-full text-lg text-center hover:bg-blue-500/70 
-            transition duration-200 font-bold"
-              >
-                Tweet
-              </button>
-            </div>
-          </div>
-        </div>
+        <ComposeTweet />
       </div>
       <div className="flex flex-col">
         {Array.from({ length: 5 }).map((_, i) => (
