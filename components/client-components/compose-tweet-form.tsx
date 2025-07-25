@@ -41,7 +41,7 @@ export default function ComposeTweetForm({
             className={`rounded-full px-4 py-2 w-full text-lg text-center transition duration-200 font-semibold
               ${
                 tweet.trim() === ""
-                  ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                  ? "bg-gray-400 text-gray-700"
                   : "bg-white text-black hover:bg-white/70"
               }`}
           >

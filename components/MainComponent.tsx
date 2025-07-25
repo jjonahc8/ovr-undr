@@ -4,6 +4,12 @@ import { IoShareOutline } from "react-icons/io5";
 import ComposeTweet from "./server-components/compose-tweet";
 import { createClient } from "@/lib/supabase/server";
 import { parseISO } from "date-fns";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 const MainComponent = async function () {
   const supabase = await createClient();
@@ -72,7 +78,7 @@ const MainComponent = async function () {
               </div>
               <div className="flex flex-col w-full">
                 <div className="flex items-center w-full justify-between">
-                  <div className="flex items-center w-full">
+                  <div className="flex items-center w-full mt-1">
                     <div className="font-bold">
                       {tweets[timelineLength - 1 - i].author}
                     </div>
@@ -84,7 +90,14 @@ const MainComponent = async function () {
                     </div>
                   </div>
                   <div className="text-gray-500">
-                    <BsThreeDots />
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <BsThreeDots />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem>Delete Tweet</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
                 <div className="text-white text-base">
