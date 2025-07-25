@@ -1,4 +1,4 @@
-import { AuthButton } from "@/components/auth-button";
+import { AuthButton } from "@/components/server-components/auth-button";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";

@@ -3,7 +3,7 @@ import { HiOutlineHashtag } from "react-icons/hi";
 import { BsBell, BsEnvelope, BsThreeDots, BsTwitterX } from "react-icons/bs";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { LogoutButton } from "./logout-button";
+import { LogoutButton } from "./client-components/logout-button";
 
 const NAVIGATION_ITEMS = [
   { title: "Logo", icon: BsTwitterX },
