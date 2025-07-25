@@ -1,16 +1,9 @@
 import { BiHomeCircle, BiUser } from "react-icons/bi";
 import { HiOutlineHashtag } from "react-icons/hi";
-import {
-  BsBell,
-  BsBookmark,
-  BsEnvelope,
-  BsThreeDots,
-  BsTwitterX,
-} from "react-icons/bs";
+import { BsBell, BsEnvelope, BsThreeDots, BsTwitterX } from "react-icons/bs";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./logout-button";
-import { Button } from "./ui/button";
 
 const NAVIGATION_ITEMS = [
   { title: "Logo", icon: BsTwitterX },
@@ -24,7 +17,6 @@ const NAVIGATION_ITEMS = [
 export async function LeftSidebar() {
   const supabase = await createClient();
 
-  // You can also use getUser() which will be slower.
   const { data } = await supabase.auth.getClaims();
 
   const user = data?.claims;
