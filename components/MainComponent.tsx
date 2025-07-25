@@ -11,7 +11,7 @@ const MainComponent = async function () {
   let { data: tweets, error } = await supabase
     .from("tweets")
     .select("*")
-    .range(0, 9);
+    .range(0, 100);
 
   if (error) {
     return error;

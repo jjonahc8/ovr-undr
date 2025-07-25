@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import ComposeTweetForm from "../client-components/compose-tweet-form";
 
 const ComposeTweet = () => {
   async function submitTweet(formData: FormData) {
@@ -19,31 +20,14 @@ const ComposeTweet = () => {
       user_id: user?.id,
       author: user?.user_metadata.display_name,
     });
+
+    if (error) {
+      console.error("Error inserting tweet:", error);
+      return;
+    }
   }
 
-  return (
-    <form action={submitTweet} className="flex flex-col w-full h-full">
-      <input
-        type="text"
-        name="tweet"
-        className="w-full h-full text-2xl placeholder:text-gray-600 bg-transparent border-b-[0.5px] border-gray-600 p-4 
-          outline-none border-none"
-        placeholder="What's the plot?"
-      />
-      <div className="w-full justify-between items-center flex">
-        <div></div>
-        <div className="w-full max-w-[100px]">
-          <button
-            type="submit"
-            className="rounded-full text-black bg-white px-4 py-2 w-full text-lg text-center hover:bg-white/70 
-            transition duration-200 font-semibold"
-          >
-            Plot
-          </button>
-        </div>
-      </div>
-    </form>
-  );
+  return <ComposeTweetForm submitTweet={submitTweet} />;
 };
 
 export default ComposeTweet;
