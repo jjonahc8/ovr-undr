@@ -74,7 +74,9 @@ export default function TweetCard({ tweet }: { tweet: any }) {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={handleDelete}>
-                  <button disabled={isPending}>Delete Tweet</button>
+                  <button disabled={isPending} className="text-red-500">
+                    Delete Tweet
+                  </button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
