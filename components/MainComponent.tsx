@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import TweetCard from "./TweetCard";
 
 const MainComponent = async function () {
   const supabase = await createClient();
@@ -53,6 +54,10 @@ const MainComponent = async function () {
     }
   }
 
+  async function deleteTweet(tweet_id: any) {
+    console.log(tweet_id);
+  }
+
   // need to include case where there are no tweets available
   if (timelineLength) {
     return (
@@ -68,60 +73,12 @@ const MainComponent = async function () {
           <ComposeTweet />
         </div>
         <div className="flex flex-col">
-          {Array.from({ length: timelineLength }).map((_, i) => (
-            <div
-              key={i}
-              className="border-b-[0.5px] border-gray-600 p-2 flex space-x-4"
-            >
-              <div>
-                <div className="w-10 h-10 bg-slate-200 rounded-full ml-2 mt-2" />
-              </div>
-              <div className="flex flex-col w-full">
-                <div className="flex items-center w-full justify-between">
-                  <div className="flex items-center w-full mt-1">
-                    <div className="font-bold">
-                      {tweets[timelineLength - 1 - i].author}
-                    </div>
-                    <div className="text-gray-500">
-                      <BsDot />
-                    </div>
-                    <div className="text-gray-500 text-sm">
-                      {generateDate(tweets[timelineLength - 1 - i].created_at)}
-                    </div>
-                  </div>
-                  <div className="text-gray-500">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <BsThreeDots />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem>Delete Tweet</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-                <div className="text-white text-base">
-                  {tweets[timelineLength - 1 - i].text}
-                </div>
-                {/* need support for images */}
-                {/* <div className="bg-slate-400 aspect-square w-full h-80 rounded-xl mt-2"></div> */}
-                <div className="flex items-center justify-between space-x-20 mt-2 w-full">
-                  <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
-                    <BsChat />
-                  </div>
-                  <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
-                    <AiOutlineRetweet />
-                  </div>
-                  <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
-                    <AiOutlineHeart />
-                  </div>
-                  <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
-                    <IoShareOutline />
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+          {tweets
+            .slice()
+            .reverse()
+            .map((tweet, i) => (
+              <TweetCard key={tweet.id} tweet={tweet} />
+            ))}
         </div>
       </main>
     );
