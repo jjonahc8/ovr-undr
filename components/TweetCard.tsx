@@ -84,7 +84,13 @@ export default function TweetCard({ tweet }: { tweet: any }) {
           </div>
         </div>
         <div className="text-white text-base">{tweet.text}</div>
-        <img className="mt-2 max-w-md" src={tweet.file_link} />
+        {tweet.file_link && (
+          <img
+            className="mt-2 max-w-md"
+            src={tweet.file_link}
+            alt="Attached file"
+          />
+        )}
         <div className="flex items-center justify-between space-x-20 mt-2 w-full">
           <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
             <BsChat />
