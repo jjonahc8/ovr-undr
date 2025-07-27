@@ -1,15 +1,6 @@
-import { BsChat, BsDot, BsThreeDots } from "react-icons/bs";
-import { AiOutlineHeart, AiOutlineRetweet } from "react-icons/ai";
-import { IoShareOutline } from "react-icons/io5";
 import ComposeTweet from "./server-components/compose-tweet";
 import { createClient } from "@/lib/supabase/server";
 import { parseISO } from "date-fns";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 import TweetCard from "./TweetCard";
 
 const MainComponent = async function () {
@@ -52,10 +43,6 @@ const MainComponent = async function () {
     } else {
       return `${years} year${years === 1 ? "" : "s"} ago`;
     }
-  }
-
-  async function deleteTweet(tweet_id: any) {
-    console.log(tweet_id);
   }
 
   // need to include case where there are no tweets available
