@@ -86,7 +86,7 @@ export default function TweetCard({ tweet }: { tweet: any }) {
         <div className="text-white text-base">{tweet.text}</div>
         {tweet.file_link && (
           <img
-            className="mt-2 max-w-md"
+            className="rounded-xl mt-2 max-w-md"
             src={tweet.file_link}
             alt="Attached file"
           />
