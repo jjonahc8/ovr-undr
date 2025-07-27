@@ -9,16 +9,22 @@ export default function ComposeTweetForm({
 }) {
   const [tweet, setTweet] = useState("");
   const router = useRouter();
+  const formData = new FormData();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData();
     formData.append("tweet", tweet);
 
     submitTweet(formData);
     setTweet("");
     router.refresh();
+  };
+
+  const handleImage = async (e: any) => {
+    const file = e.target.files[0];
+
+    formData.append("file", file);
   };
 
   return (
@@ -33,7 +39,15 @@ export default function ComposeTweetForm({
           outline-none border-none"
       />
       <div className="w-full justify-between items-center flex">
-        <div></div>
+        <label htmlFor="fileUpload" className="cursor-pointer text-blue-500">
+          File Upload
+        </label>
+        <input
+          type="file"
+          id="fileUpload"
+          className="hidden"
+          onChange={(e) => handleImage(e)}
+        />
         <div className="w-full max-w-[100px]">
           <button
             type="submit"
