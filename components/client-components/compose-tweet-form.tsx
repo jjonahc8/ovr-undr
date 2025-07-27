@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import TextareaAutosize from "react-textarea-autosize";
 
 export default function ComposeTweetForm({
   submitTweet,
@@ -29,14 +30,14 @@ export default function ComposeTweetForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col w-full h-full">
-      <input
-        type="text"
+      <TextareaAutosize
         name="tweet"
         value={tweet}
         onChange={(e) => setTweet(e.target.value)}
         placeholder="What's the plot?"
         className="w-full h-full text-2xl placeholder:text-gray-600 bg-transparent border-b-[0.5px] border-gray-600 p-4 
-          outline-none border-none"
+          outline-none border-none no-scrollbar"
+        maxLength={280}
       />
       <div className="w-full justify-between items-center flex">
         <label htmlFor="fileUpload" className="cursor-pointer text-blue-500">
