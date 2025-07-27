@@ -6,13 +6,14 @@ import TweetCard from "./TweetCard";
 const MainComponent = async function () {
   const supabase = await createClient();
 
-  let { data: tweets, error } = await supabase
+  let { data: tweets, error: tweetFetchError } = await supabase
     .from("tweets")
     .select("*")
     .range(0, 100);
 
-  if (error) {
-    return error;
+  if (tweetFetchError) {
+    console.error("Tweet Fetch Error:", tweetFetchError);
+    return;
   }
 
   const timelineLength = tweets?.length;
