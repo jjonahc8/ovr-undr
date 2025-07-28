@@ -2,7 +2,7 @@
 
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSection from "@/components/RightSection";
-import BackButton from "@/components/client-components/back-button";
+import BackButton from "@/components/ui/back-button";
 
 export default async function UserPage(props: {
   params: Promise<{ username: string }>;
