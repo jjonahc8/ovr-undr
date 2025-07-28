@@ -1,4 +1,3 @@
-// components/TweetCard.tsx
 "use client";
 
 import { BsChat, BsDot, BsThreeDots } from "react-icons/bs";
@@ -12,7 +11,6 @@ import {
 } from "./ui/dropdown-menu";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 export default function TweetCard({ tweet }: { tweet: any }) {
   const router = useRouter();
@@ -31,6 +29,10 @@ export default function TweetCard({ tweet }: { tweet: any }) {
       console.error("Failed to delete tweet");
     }
   }
+
+  const handleRedirect = (route: string) => {
+    router.push(`/${route}`);
+  };
 
   function generateDate(supabaseDate: any): string {
     const nowDate: Date = new Date();
@@ -61,7 +63,12 @@ export default function TweetCard({ tweet }: { tweet: any }) {
       <div className="flex flex-col w-full">
         <div className="flex items-center w-full justify-between">
           <div className="flex items-center w-full mt-1">
-            <div className="font-bold">{tweet.author}</div>
+            <div
+              onClick={() => handleRedirect(tweet.author)}
+              className="font-bold hover:underline cursor-pointer"
+            >
+              {tweet.author}
+            </div>
             <div className="text-gray-500">
               <BsDot />
             </div>

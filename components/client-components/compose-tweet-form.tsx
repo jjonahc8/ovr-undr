@@ -83,7 +83,7 @@ export default function ComposeTweetForm({
           <button
             type="submit"
             disabled={tweet.trim() === ""}
-            className={`rounded-full px-4 py-2 w-full text-lg text-center transition duration-200 font-semibold
+            className={`rounded-full py-2 w-full text-xl text-center transition duration-200 font-semibold
               ${
                 tweet.trim() === ""
                   ? "bg-gray-400 text-gray-700"
