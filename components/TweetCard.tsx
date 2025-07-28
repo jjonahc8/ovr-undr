@@ -44,6 +44,7 @@ export default function TweetCard({ tweet }: { tweet: any }) {
     const months = Math.floor(days / 30.44);
     const years = Math.floor(days / 365.25);
 
+    if (seconds == 0) return `Just now`;
     if (seconds < 60) return `${seconds} seconds ago`;
     if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
     if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
