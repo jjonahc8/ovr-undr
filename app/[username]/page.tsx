@@ -1,5 +1,3 @@
-"use server";
-
 import TweetCard from "@/components/client-components/tweet-card";
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSection from "@/components/RightSection";
@@ -8,6 +6,7 @@ import generateDate from "@/components/utilities/generateDate";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import EditProfileTrigger from "@/components/client-components/edit-profile-trigger";
+import submitProfileChanges from "../api/actions/submit-profile-changes";
 
 export default async function UserPage(props: {
   params: Promise<{ username: string }>;
@@ -62,19 +61,16 @@ export default async function UserPage(props: {
               <h1 className="text-3xl font-bold">{profileUsername}</h1>
               <h1 className="text-sm text-gray-400">
                 {profileUser?.[0]?.first_name} {profileUser?.[0]?.last_name}
-                Carson Cabrera
               </h1>
             </div>
-            {authUserID === profileUser?.[0]?.id && <EditProfileTrigger />}
+            {authUserID === profileUser?.[0]?.id && (
+              <EditProfileTrigger submitProfileChanges={submitProfileChanges} />
+            )}
           </div>
-          <div className="pt-4 px-4">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis,
-              asperiores modi architecto natus tempora nam repudiandae dolor
-              voluptates vitae repellat?
-            </p>
+          <div className="pt-8 px-4">
+            <p>{profileUser?.[0]?.bio}</p>
           </div>
-          <div className="pt-2 px-4 text-gray-400">
+          <div className="pt-4 px-4 text-gray-400">
             <p>Joined {generateDate(profileUser?.[0].created_at)}</p>
           </div>
           <div className="flex flex-row items-center py-2 px-4">

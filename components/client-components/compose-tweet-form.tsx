@@ -45,7 +45,7 @@ export default function ComposeTweetForm({
         onChange={(e) => setTweet(e.target.value)}
         placeholder="What's the plot?"
         className="w-full h-full text-2xl placeholder:text-gray-600 bg-transparent border-b-[0.5px] border-gray-600 p-4 
-          outline-none border-none no-scrollbar"
+          outline-none border-none"
         maxLength={280}
       />
 

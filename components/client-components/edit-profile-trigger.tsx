@@ -4,7 +4,11 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import EditProfileModal from "../ui/edit-profile-modal";
 
-export default function EditProfileTrigger() {
+export default function EditProfileTrigger({
+  submitProfileChanges,
+}: {
+  submitProfileChanges: (formData: FormData) => Promise<void>;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -16,7 +20,12 @@ export default function EditProfileTrigger() {
       >
         Edit Profile
       </Button>
-      {open && <EditProfileModal onClose={() => setOpen(false)} />}
+      {open && (
+        <EditProfileModal
+          onClose={() => setOpen(false)}
+          submitProfileChanges={submitProfileChanges}
+        />
+      )}
     </>
   );
 }
