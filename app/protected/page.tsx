@@ -16,7 +16,7 @@ export default async function ProtectedPage() {
 
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
-      <div className="max-w-[80vw] w-full h-full flex relative">
+      <div className="max-w-[90vw] w-full h-full flex relative">
         <LeftSidebar />
         {(async () => {
           const mainComponentResult = await MainComponent();
