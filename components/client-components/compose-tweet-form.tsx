@@ -54,7 +54,7 @@ export default function ComposeTweetForm({
     var margin_t = "mt-6";
     var margin_l = "ml-5";
     var padding_x = "px-4";
-    var text_size = "text_2xl";
+    var text_size = "text-2xl";
     var post_button_name = "Plot";
   }
 
