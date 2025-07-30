@@ -33,6 +33,54 @@ async function submitProfileChanges(formData: FormData) {
     ? formData.get("lastName")
     : profileData?.[0].last_name;
   let bio = formData.get("bio") ? formData.get("bio") : profileData?.[0].bio;
+  let banner = formData.get("banner");
+  let pfp = formData.get("pfp");
+
+  if (banner) {
+    const bannerID = uuidv4();
+    const { data: uploadBannerData, error: uploadBannerError } =
+      await supabase.storage
+        .from("banner")
+        .upload(authUserID + "/" + bannerID, banner);
+
+    if (uploadBannerError) {
+      console.error("File upload error:", uploadBannerError);
+      return;
+    }
+    const banner_image_link = `https://qzewmoffplkvyftuarjb.supabase.co/storage/v1/object/public/banner/${authUserID}/${bannerID}`;
+
+    const { data: profileUpdateData, error: profileUpdateError } =
+      await supabase
+        .from("profiles")
+        .update({ banner_link: banner_image_link })
+        .eq("id", authUserID);
+
+    if (profileUpdateError) {
+      console.error("Error updating profile: ", profileUpdateError);
+    }
+  }
+
+  if (pfp) {
+    const pfpID = uuidv4();
+    const { data: uploadPFPData, error: uploadPFPError } =
+      await supabase.storage.from("pfp").upload(authUserID + "/" + pfpID, pfp);
+
+    if (uploadPFPError) {
+      console.error("File upload error:", uploadPFPError);
+      return;
+    }
+    const pfp_image_link = `https://qzewmoffplkvyftuarjb.supabase.co/storage/v1/object/public/pfp/${authUserID}/${pfpID}`;
+
+    const { data: profileUpdateData, error: profileUpdateError } =
+      await supabase
+        .from("profiles")
+        .update({ pfp_link: pfp_image_link })
+        .eq("id", authUserID);
+
+    if (profileUpdateError) {
+      console.error("Error updating profile: ", profileUpdateError);
+    }
+  }
 
   const { data: profileUpdateData, error: profileUpdateError } = await supabase
     .from("profiles")
@@ -41,8 +89,6 @@ async function submitProfileChanges(formData: FormData) {
 
   if (profileUpdateError) {
     console.error("Error updating profile: ", profileUpdateError);
-  } else {
-    console.log(profileUpdateData);
   }
 }
 

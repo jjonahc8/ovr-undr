@@ -54,8 +54,26 @@ export default async function UserPage(props: {
             </h1>
           </div>
           <div className="relative inline-block">
-            <div className="w-full h-40 bg-slate-400 mt-3"></div>
-            <div className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full bg-slate-50"></div>
+            {profileUser?.[0]?.banner_link && (
+              <img
+                className="w-full h-40 mt-3"
+                src={profileUser?.[0]?.banner_link}
+                alt="profile banner"
+              />
+            )}
+            {!profileUser?.[0]?.banner_link && (
+              <div className="w-full h-40 bg-slate-400 mt-3"></div>
+            )}
+            {profileUser?.[0]?.pfp_link && (
+              <img
+                className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full"
+                src={profileUser?.[0]?.pfp_link}
+                alt="profile banner"
+              />
+            )}
+            {!profileUser?.[0]?.pfp_link && (
+              <div className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full bg-slate-50"></div>
+            )}
           </div>
           <div className="flex justify-end mt-4 px-4">
             {authUserID === profileUser?.[0]?.id && (

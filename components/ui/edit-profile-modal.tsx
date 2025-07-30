@@ -32,28 +32,129 @@ export default function EditProfileModal({
     if (firstName) formData.append("firstName", firstName);
     if (lastName) formData.append("lastName", lastName);
     if (bio) formData.append("bio", bio);
+    if (banner) formData.append("banner", banner);
+    if (pfp) formData.append("pfp", pfp);
     await submitProfileChanges(formData);
     router.refresh();
     onClose();
   };
 
+  const handleBanner = async (e: any) => {
+    const file = e.target.files?.[0] ?? null;
+    setBanner(file);
+    setBannerPreviewURL(file ? URL.createObjectURL(file) : null);
+  };
+
+  const handlePFP = async (e: any) => {
+    const file = e.target.files?.[0] ?? null;
+    setPFP(file);
+    setPFPPreviewURL(file ? URL.createObjectURL(file) : null);
+  };
+
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-scroll"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className="bg-white text-black p-6 rounded-xl w-[90%] max-w-md"
       >
-        <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
+        <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* later make it so that when you open the form it fetches current values */}
+          <div className="relative inline-block">
+            {!bannerPreviewURL && (
+              <>
+                <label
+                  htmlFor="backgroundUpload"
+                  className="cursor-pointer text-black"
+                >
+                  <div
+                    className="flex items-center justify-center  rounded-xl w-full h-32 
+                hover:bg-slate-500 bg-slate-400"
+                  >
+                    Edit banner
+                  </div>
+                </label>
+                <input
+                  type="file"
+                  id="backgroundUpload"
+                  className="hidden"
+                  onChange={(e) => {
+                    handleBanner(e);
+                  }}
+                />
+              </>
+            )}
+            {bannerPreviewURL && (
+              <div className="relative">
+                <img
+                  src={bannerPreviewURL}
+                  alt="Preview"
+                  className="rounded-xl w-full h-32"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBanner(null);
+                    setBannerPreviewURL(null);
+                  }}
+                  className="absolute top-2 right-2 bg-black bg-opacity-70 rounded-full h-8 w-8 text-white text-2xl 
+                flex items-center justify-center hover:bg-opacity-60"
+                >
+                  &times;
+                </button>
+              </div>
+            )}
+            {!pfpPreviewURL && (
+              <>
+                <label
+                  htmlFor="profileUpload"
+                  className="cursor-pointer text-black overflow-hidden h-32 w-32"
+                >
+                  <div
+                    className="absolute left-4 bottom-0 translate-y-1/2 flex items-center justify-center text-center overflow-hidden 
+                    rounded-full h-32 w-32 hover:bg-slate-300 bg-slate-200"
+                  >
+                    Edit profile picture
+                  </div>
+                </label>
+                <input
+                  type="file"
+                  id="profileUpload"
+                  className="hidden"
+                  onChange={(e) => {
+                    handlePFP(e);
+                  }}
+                />
+              </>
+            )}
+            {pfpPreviewURL && (
+              <div className="absolute left-4 bottom-0 translate-y-1/2 inline-block group overflow-hidden rounded-full h-32 w-32">
+                <img
+                  src={pfpPreviewURL}
+                  alt="Preview"
+                  className="h-full w-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPFP(null);
+                    setPFPPreviewURL(null);
+                  }}
+                  className="absolute inset-0 bg-black bg-opacity-50 text-white text-5xl hidden group-hover:flex items-center justify-center"
+                >
+                  &times;
+                </button>
+              </div>
+            )}
+          </div>
           <input
             type="text"
             onChange={(e) => setFirstName(e.target.value)}
             placeholder="First Name"
-            className="p-2 border rounded"
+            className="p-2 border rounded mt-16"
             maxLength={50}
           />
           <input
@@ -76,12 +177,16 @@ export default function EditProfileModal({
             disabled={
               firstName.trim() === "" &&
               lastName.trim() === "" &&
-              bio.trim() === ""
+              bio.trim() === "" &&
+              !banner &&
+              !pfp
             }
             className={`bg-black text-white rounded p-2 transition ${
               firstName.trim() === "" &&
               lastName.trim() === "" &&
-              bio.trim() === ""
+              bio.trim() === "" &&
+              !banner &&
+              !pfp
                 ? "bg-gray-400 text-gray-700"
                 : "bg-black text-white hover:bg-black/70"
             }`}
