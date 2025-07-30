@@ -81,17 +81,17 @@ export default function TweetCard({ tweet }: { tweet: any }) {
             />
           </div>
         )}
-        <div className="flex flex-wrap items-center justify-start gap-4 mt-2 w-full">
-          <div className="flex-1 min-w-[40px] flex justify-center rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
+        <div className="flex flex-wrap items-center justify-between gap-4 mt-2 w-full">
+          <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
             <BsChat />
           </div>
-          <div className="flex-1 min-w-[40px] flex justify-center rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
+          <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
             <AiOutlineRetweet />
           </div>
-          <div className="flex-1 min-w-[40px] flex justify-center rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
+          <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
             <AiOutlineHeart />
           </div>
-          <div className="flex-1 min-w-[40px] flex justify-center rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
+          <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
             <IoShareOutline />
           </div>
         </div>

@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import EditProfileTrigger from "@/components/client-components/edit-profile-trigger";
 import submitProfileChanges from "../api/actions/submit-profile-changes";
+import { Button } from "@/components/ui/button";
 
 export default async function UserPage(props: {
   params: Promise<{ username: string }>;
@@ -45,7 +46,7 @@ export default async function UserPage(props: {
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[90vw] w-full h-full flex relative">
         <LeftSidebar />
-        <main className="sticky top-0 flex max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
+        <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <div className="flex flex-row justify-start items-center mt-4 ml-4">
             <BackButton />
             <h1 className="text-xl font-bold px-6 backdrop-blur bg-black/10 sticky top-0">
@@ -59,6 +60,14 @@ export default async function UserPage(props: {
           <div className="flex justify-end mt-4 px-4">
             {authUserID === profileUser?.[0]?.id && (
               <EditProfileTrigger submitProfileChanges={submitProfileChanges} />
+            )}
+            {authUserID !== profileUser?.[0].id && (
+              <Button
+                className="text-xl text-white font-semibold bg-transparent border-[0.5px] border-white hover:bg-white 
+          hover:text-black transition duration-200 rounded-full"
+              >
+                Follow
+              </Button>
             )}
           </div>
           <div className="flex flex-col pt-6 px-4">
