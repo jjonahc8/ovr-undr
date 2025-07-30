@@ -14,7 +14,7 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "PickPlots",
+  title: "FreePlay",
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 

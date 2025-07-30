@@ -1,6 +1,5 @@
 import ComposeTweet from "./server-components/compose-tweet";
 import { createClient } from "@/lib/supabase/server";
-import { parseISO } from "date-fns";
 import TweetCard from "./client-components/tweet-card";
 
 const MainComponent = async function () {
@@ -23,7 +22,7 @@ const MainComponent = async function () {
     return (
       <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
         <div className="backdrop-blur-xl backdrop-brightness-50 sticky top-0">
-          <h1 className="text-xl font-bold ml-6 mt-6 mb-4">Home</h1>
+          <h1 className="text-xl font-bold ml-6 mt-5 mb-4">Home</h1>
         </div>
         <div
           className="border-t-[0.5px] px-4 border-b-[0.5px] flex items-stretch py-4 border-gray-600
