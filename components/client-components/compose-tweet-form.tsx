@@ -48,26 +48,26 @@ export default function ComposeTweetForm({
           outline-none border-none"
         maxLength={280}
       />
-
       {imagePreviewUrl && (
-        <div className="relative inline-block">
+        <div className="relative w-full max-w-md ml-4 mr-auto pr-2">
           <button
             type="button"
             onClick={() => {
               setImage(null);
               setImagePreviewUrl(null);
             }}
-            className="absolute top-2 right-10 bg-black bg-opacity-70 rounded-full h-8 w-8 text-white text-2xl hover:bg-opacity-60"
+            className="absolute top-2 right-4 bg-black bg-opacity-70 rounded-full h-8 w-8 text-white text-2xl hover:bg-opacity-60"
           >
             &times;
           </button>
           <img
             src={imagePreviewUrl}
             alt="Preview"
-            className="rounded-xl max-w-md ml-4"
+            className="rounded-xl w-full"
           />
         </div>
       )}
+
       <div className="w-full justify-between items-center flex border-t-[0.5px] border-gray-600 mt-6">
         <label htmlFor="fileUpload" className="cursor-pointer text-white mt-4">
           <GoFileMedia />

@@ -45,7 +45,7 @@ export default async function UserPage(props: {
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[90vw] w-full h-full flex relative">
         <LeftSidebar />
-        <main className="sticky top-0 flex w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
+        <main className="sticky top-0 flex max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <div className="flex flex-row justify-start items-center mt-4 ml-4">
             <BackButton />
             <h1 className="text-xl font-bold px-6 backdrop-blur bg-black/10 sticky top-0">
@@ -56,21 +56,21 @@ export default async function UserPage(props: {
             <div className="w-full h-40 bg-slate-400 mt-3"></div>
             <div className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full bg-slate-50"></div>
           </div>
-          <div className="flex flex-row items-center mt-2 justify-between">
-            <div className="flex flex-col ml-40">
-              <h1 className="text-3xl font-bold">{profileUsername}</h1>
-              <h1 className="text-sm text-gray-400">
-                {profileUser?.[0]?.first_name} {profileUser?.[0]?.last_name}
-              </h1>
-            </div>
+          <div className="flex justify-end mt-4 px-4">
             {authUserID === profileUser?.[0]?.id && (
               <EditProfileTrigger submitProfileChanges={submitProfileChanges} />
             )}
           </div>
-          <div className="pt-8 px-4">
+          <div className="flex flex-col pt-6 px-4">
+            <h1 className="text-3xl font-bold">{profileUsername}</h1>
+            <h1 className="text-sm text-gray-400">
+              {profileUser?.[0]?.first_name} {profileUser?.[0]?.last_name}
+            </h1>
+          </div>
+          <div className="pt-2 px-4">
             <p>{profileUser?.[0]?.bio}</p>
           </div>
-          <div className="pt-4 px-4 text-gray-400">
+          <div className="pt-2 px-4 text-gray-400">
             <p>Joined {generateDate(profileUser?.[0].created_at)}</p>
           </div>
           <div className="flex flex-row items-center py-2 px-4">

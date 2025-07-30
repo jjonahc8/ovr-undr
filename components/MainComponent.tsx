@@ -21,8 +21,8 @@ const MainComponent = async function () {
   // need to include case where there are no tweets available
   if (timelineLength) {
     return (
-      <main className="sticky top-0 flex w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
-        <div className="backdrop-blur sticky top-0">
+      <main className="sticky top-0 flex max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
+        <div className="backdrop-blur-xl backdrop-brightness-50 sticky top-0">
           <h1 className="text-xl font-bold ml-6 mt-6 mb-4">Home</h1>
         </div>
         <div

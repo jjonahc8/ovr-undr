@@ -16,7 +16,7 @@ export default function EditProfileTrigger({
       <Button
         onClick={() => setOpen(true)}
         className="text-xl text-white font-semibold bg-transparent border-[0.5px] border-white hover:bg-white 
-          hover:text-black transition duration-200 mr-4 rounded-full"
+          hover:text-black transition duration-200 rounded-full"
       >
         Edit Profile
       </Button>

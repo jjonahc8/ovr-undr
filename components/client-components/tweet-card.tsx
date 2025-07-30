@@ -73,23 +73,25 @@ export default function TweetCard({ tweet }: { tweet: any }) {
         </div>
         <div className="text-white text-base">{tweet.text}</div>
         {tweet.file_link && (
-          <img
-            className="rounded-xl mt-2 max-w-md"
-            src={tweet.file_link}
-            alt="Attached file"
-          />
+          <div className="mt-2 w-full max-w-md">
+            <img
+              src={tweet.file_link}
+              alt="Attached file"
+              className="w-full h-auto rounded-xl"
+            />
+          </div>
         )}
-        <div className="flex items-center justify-between space-x-20 mt-2 w-full">
-          <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
+        <div className="flex flex-wrap items-center justify-start gap-4 mt-2 w-full">
+          <div className="flex-1 min-w-[40px] flex justify-center rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
             <BsChat />
           </div>
-          <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
+          <div className="flex-1 min-w-[40px] flex justify-center rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
             <AiOutlineRetweet />
           </div>
-          <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
+          <div className="flex-1 min-w-[40px] flex justify-center rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
             <AiOutlineHeart />
           </div>
-          <div className="rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
+          <div className="flex-1 min-w-[40px] flex justify-center rounded-full hover:bg-white/10 transition duration-200 p-3 cursor-pointer">
             <IoShareOutline />
           </div>
         </div>

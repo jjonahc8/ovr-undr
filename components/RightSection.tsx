@@ -2,22 +2,24 @@ import { BsSearch } from "react-icons/bs";
 
 const RightSection = () => {
   return (
-    <section className="w-[30%] sticky mt-2 overflow-scroll flex flex-col items-stretch h-screen px-6">
-      <div>
-        <div className="relative w-full h-full group">
-          <input
-            id="searchBox"
-            type="text"
-            placeholder="Search Twitter"
-            className="outline-none peer focus:border-primary focus:border bg-neutral-900/90 w-full h-full rounded-xl py-4 pl-14 pr-4"
-          />
-          <label
-            htmlFor="searchBox"
-            className="absolute top-0 left-0 h-full flex items-center justify-center p-4 text-gray-500
+    <section className="w-[30%] flex flex-col items-stretch h-screen px-6 sticky top-0 overflow-scroll">
+      <div className="sticky top-0 bg-black">
+        <div className="mt-2 mb-1">
+          <div className="relative w-full h-full group">
+            <input
+              id="searchBox"
+              type="text"
+              placeholder="Search Twitter"
+              className="outline-none peer focus:border-primary focus:border bg-neutral-900/90 w-full h-full rounded-xl py-4 pl-14 pr-4"
+            />
+            <label
+              htmlFor="searchBox"
+              className="absolute top-0 left-0 h-full flex items-center justify-center p-4 text-gray-500
                     peer-focus:text-primary"
-          >
-            <BsSearch className="w-5 h-5" />
-          </label>
+            >
+              <BsSearch className="w-5 h-5" />
+            </label>
+          </div>
         </div>
       </div>
       <div className="flex flex-col rounded-xl bg-neutral-900 my-4">
