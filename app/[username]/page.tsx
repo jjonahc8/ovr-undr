@@ -42,6 +42,22 @@ export default async function UserPage(props: {
     return;
   }
 
+  const parentIds = [
+    ...new Set((tweets ?? []).map((tweet) => tweet.parent_id).filter(Boolean)),
+  ];
+
+  let { data: parents, error: parentFetchError } = await supabase
+    .from("tweets")
+    .select("*")
+    .in("id", parentIds);
+
+  if (parentFetchError) {
+    console.error("Parent Fetch Error:", parentFetchError);
+    return;
+  }
+
+  const parentMap = new Map(parents?.map((parent) => [parent.id, parent]));
+
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[90vw] w-full h-full flex relative">
@@ -68,7 +84,7 @@ export default async function UserPage(props: {
               <img
                 className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full"
                 src={profileUser?.[0]?.pfp_link}
-                alt="profile banner"
+                alt="profile picture"
               />
             )}
             {!profileUser?.[0]?.pfp_link && (
@@ -114,8 +130,12 @@ export default async function UserPage(props: {
             {(tweets ?? [])
               .slice()
               .reverse()
-              .map((tweet, i) => (
-                <TweetCard key={tweet.id} tweet={tweet} />
+              .map((tweet) => (
+                <TweetCard
+                  key={tweet.id}
+                  tweet={tweet}
+                  parent={parentMap.get(tweet.parent_id) ?? null}
+                />
               ))}
           </div>
         </main>
