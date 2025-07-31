@@ -17,17 +17,29 @@ const MainComponent = async function () {
 
   const timelineLength = tweets?.length;
 
-  // need to include case where there are no tweets available
+  const parentIds = [
+    ...new Set((tweets ?? []).map((tweet) => tweet.parent_id).filter(Boolean)),
+  ];
+
+  let { data: parents, error: parentFetchError } = await supabase
+    .from("tweets")
+    .select("*")
+    .in("id", parentIds);
+
+  if (parentFetchError) {
+    console.error("Parent Fetch Error:", parentFetchError);
+    return;
+  }
+
+  const parentMap = new Map(parents?.map((parent) => [parent.id, parent]));
+
   if (timelineLength) {
     return (
       <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
         <div className="backdrop-blur-xl backdrop-brightness-50 sticky top-0">
           <h1 className="text-xl font-bold ml-6 mt-5 mb-4">Home</h1>
         </div>
-        <div
-          className="border-t-[0.5px] px-4 border-b-[0.5px] flex items-stretch py-4 border-gray-600
-    relative"
-        >
+        <div className="border-t-[0.5px] px-4 flex items-stretch py-4 border-gray-600 relative">
           <div className="w-11 h-11 bg-slate-400 rounded-full flex-none mt-3"></div>
           <ComposeTweet />
         </div>
@@ -35,8 +47,12 @@ const MainComponent = async function () {
           {tweets
             .slice()
             .reverse()
-            .map((tweet, i) => (
-              <TweetCard key={tweet.id} tweet={tweet} />
+            .map((tweet) => (
+              <TweetCard
+                key={tweet.id}
+                tweet={tweet}
+                parent={parentMap.get(tweet.parent_id) ?? null}
+              />
             ))}
         </div>
       </main>

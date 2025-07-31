@@ -14,7 +14,15 @@ import { useRouter, usePathname } from "next/navigation";
 import generateDate from "../utilities/generateDate";
 import { format } from "date-fns";
 
-export default function TweetCard({ tweet }: { tweet: any }) {
+export default function TweetCard({
+  tweet,
+  parent,
+  window,
+}: {
+  tweet: any;
+  parent?: any;
+  window?: boolean;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [focused, setFocused] = useState(false);
@@ -41,25 +49,29 @@ export default function TweetCard({ tweet }: { tweet: any }) {
     router.push(`/${route}`);
   };
 
-  useEffect(() => {
-    const checkIfFocusedTweet = () => {
-      if (tweet.id === pathname.slice(6)) {
-        setFocused(true);
-      }
-    };
+  const isFocusedTweet = tweet.id === pathname.slice(6);
 
-    checkIfFocusedTweet();
-  }, []);
+  const parentData = parent ? <TweetCard tweet={parent} window={true} /> : null;
+  const topBorder = !window ? "border-t-[0.5px] border-gray-600" : "";
+  const avatarSize = !window ? "w-10 h-10" : "w-5 h-5";
+  const spaceX = !window ? "space-x-4" : "space-x-2";
+  const hover = !window ? "hover:bg-gray-950" : "";
+
+  useEffect(() => {
+    if (isFocusedTweet) {
+      setFocused(true);
+    }
+  }, [pathname, isFocusedTweet]);
 
   return !focused ? (
     <div
-      className="border-b-[0.5px] border-gray-600 p-2 flex space-x-4 hover:bg-gray-950"
+      className={`${topBorder} p-2 flex ${spaceX} ${hover}`}
       onClick={() => {
         handleRedirect(`post/${tweet.id}`);
       }}
     >
-      <div className="w-10 h-10 ml-2 mt-2">
-        <div className="w-10 h-10 bg-slate-200 rounded-full" />
+      <div className={`${avatarSize} ml-2 mt-2`}>
+        <div className={`${avatarSize} bg-slate-200 rounded-full`} />
       </div>
       <div className="flex flex-col w-full">
         <div className="flex items-center w-full justify-between">
@@ -81,28 +93,38 @@ export default function TweetCard({ tweet }: { tweet: any }) {
                 {generateDate(tweet.created_at)}
               </div>
             </div>
-            <div className="text-gray-500 h-4 mr-3">
-              <DropdownMenu>
-                <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
-                  <BsThreeDots />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete();
-                    }}
-                  >
-                    <button disabled={isPending} className="text-red-500">
-                      Delete Tweet
-                    </button>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            {!window && (
+              <div className="text-gray-500 h-4 mr-3">
+                <DropdownMenu>
+                  <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
+                    <BsThreeDots />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete();
+                      }}
+                    >
+                      <button disabled={isPending} className="text-red-500">
+                        Delete Tweet
+                      </button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
           </div>
         </div>
         <div className="text-white text-base">{tweet.text}</div>
+        {parent && (
+          <div
+            className="border-[0.5px] border-gray-600 rounded-xl mt-2 mr-3 pb-2 hover:bg-gray-900"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {parentData}
+          </div>
+        )}
         {tweet.file_link && (
           <div className="mt-2 mr-3">
             <img
@@ -112,20 +134,22 @@ export default function TweetCard({ tweet }: { tweet: any }) {
             />
           </div>
         )}
-        <div className="flex flex-wrap items-center justify-between gap-4 mt-2 mr-2">
-          <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
-            <BsChat />
+        {!window && (
+          <div className="flex flex-wrap items-center justify-between gap-4 mt-2 mr-2">
+            <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
+              <BsChat />
+            </div>
+            <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
+              <AiOutlineRetweet />
+            </div>
+            <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
+              <AiOutlineHeart />
+            </div>
+            <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
+              <IoShareOutline />
+            </div>
           </div>
-          <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
-            <AiOutlineRetweet />
-          </div>
-          <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
-            <AiOutlineHeart />
-          </div>
-          <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
-            <IoShareOutline />
-          </div>
-        </div>
+        )}
       </div>
     </div>
   ) : (
@@ -162,6 +186,14 @@ export default function TweetCard({ tweet }: { tweet: any }) {
           </div>
         </div>
         <div className="text-white text-lg">{tweet.text}</div>
+        {parent && (
+          <div
+            className="border-[0.5px] border-gray-600 rounded-xl mt-2 pb-2 hover:bg-gray-950"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {parentData}
+          </div>
+        )}
         {tweet.file_link && (
           <div className="w-full">
             <img
