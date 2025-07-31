@@ -126,7 +126,7 @@ export default async function UserPage(props: {
             </h1>
             <p className="text-gray-400">Following</p>
           </div>
-          <div className="flex flex-col border-t-[0.5px] border-gray-600">
+          <div className="flex flex-col">
             {(tweets ?? [])
               .slice()
               .reverse()
