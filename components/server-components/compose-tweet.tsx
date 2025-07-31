@@ -18,6 +18,8 @@ const ComposeTweet = () => {
 
     const file = formData.get("file");
 
+    const parent = formData.get("parent");
+
     if (file) {
       const fileID = uuidv4();
 
@@ -39,7 +41,9 @@ const ComposeTweet = () => {
           user_id: user?.id,
           author: user?.user_metadata.display_name,
           file_link: image_link,
+          parent_id: parent,
         });
+
       if (tweetInsertError) {
         console.error("Database Tweet Insert Error:", tweetInsertError);
       }
@@ -50,6 +54,7 @@ const ComposeTweet = () => {
           text: tweet,
           user_id: user?.id,
           author: user?.user_metadata.display_name,
+          parent_id: parent,
         });
 
       if (tweetInsertError) {

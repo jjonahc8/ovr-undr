@@ -83,11 +83,16 @@ export default function TweetCard({ tweet }: { tweet: any }) {
             </div>
             <div className="text-gray-500 h-4 mr-3">
               <DropdownMenu>
-                <DropdownMenuTrigger>
+                <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
                   <BsThreeDots />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={handleDelete}>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete();
+                    }}
+                  >
                     <button disabled={isPending} className="text-red-500">
                       Delete Tweet
                     </button>

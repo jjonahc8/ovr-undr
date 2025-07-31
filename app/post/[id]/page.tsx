@@ -26,6 +26,15 @@ export default async function PostPage(props: {
     .eq("id", params.id);
   tweet = tweet?.[0];
 
+  if (tweetFetchError) {
+    console.error("Error fetching authentication: ", tweetFetchError);
+  }
+
+  let { data: replies, error: replyFetchError } = await supabase
+    .from("tweets")
+    .select("*")
+    .eq("parent_id", params.id);
+
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[90vw] w-full h-full flex relative">
@@ -43,6 +52,14 @@ export default async function PostPage(props: {
           <div className="px-4 pt-2 pb-4 border-b-[0.5px] flex items-stretch border-gray-600 relative">
             <div className="w-10 h-10 bg-slate-400 rounded-full flex-none"></div>
             <ComposeTweet />
+          </div>
+          <div className="flex flex-col border-gray-600">
+            {(replies ?? [])
+              .slice()
+              .reverse()
+              .map((reply, i) => (
+                <TweetCard key={reply.id} tweet={reply} />
+              ))}
           </div>
         </main>
         <RightSection />
