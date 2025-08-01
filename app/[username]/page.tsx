@@ -25,7 +25,23 @@ export default async function UserPage(props: {
   const authUser = authUserData?.claims;
   const authUserID = authUser?.sub;
 
+  const { data: authProfileData, error: authProfileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", authUserData.claims.sub);
+
+  if (authProfileError) {
+    console.error("Error fetching auth user's profile:", authProfileError);
+    return;
+  }
+
+  const authProfile = authProfileData?.[0];
+
+  const avatar_link: string | null = authProfile.pfp_link;
+  const username: string | null = authProfile.username;
+
   const profileUsername = params.username;
+
   let { data: profileUser, error: profileUserError } = await supabase
     .from("profiles")
     .select("*")
@@ -58,10 +74,25 @@ export default async function UserPage(props: {
 
   const parentMap = new Map(parents?.map((parent) => [parent.id, parent]));
 
+  let authorIds = [...new Set((tweets ?? []).map((tweet) => tweet.user_id))];
+
+  let combinedSet = new Set([...parentIds, ...authorIds]);
+
+  authorIds = [...combinedSet];
+
+  let { data: tweetAuthors, error: tweetAuthorError } = await supabase
+    .from("profiles")
+    .select("*")
+    .in("id", authorIds);
+
+  if (tweetAuthorError) {
+    console.error("Avatar Fetch Error:", tweetAuthorError);
+  }
+
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[90vw] w-full h-full flex relative">
-        <LeftSidebar />
+        <LeftSidebar avatar_link={avatar_link} username={username} />
         <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <div className="flex flex-row items-center mt-4 mb-2 ml-2">
             <BackButton />
@@ -135,6 +166,7 @@ export default async function UserPage(props: {
                   key={tweet.id}
                   tweet={tweet}
                   parent={parentMap.get(tweet.parent_id) ?? null}
+                  tweetAuthors={tweetAuthors}
                 />
               ))}
           </div>

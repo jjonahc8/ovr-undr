@@ -18,10 +18,12 @@ export default function TweetCard({
   tweet,
   parent,
   window,
+  tweetAuthors,
 }: {
   tweet: any;
   parent?: any;
   window?: boolean;
+  tweetAuthors: any[] | null;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -51,11 +53,20 @@ export default function TweetCard({
 
   const isFocusedTweet = tweet.id === pathname.slice(6);
 
-  const parentData = parent ? <TweetCard tweet={parent} window={true} /> : null;
+  const parentData = parent ? (
+    <TweetCard tweet={parent} window={true} tweetAuthors={tweetAuthors} />
+  ) : null;
   const topBorder = !window ? "border-t-[0.5px] border-gray-600" : "";
-  const avatarSize = !window ? "w-10 h-10" : "w-5 h-5";
-  const spaceX = !window ? "space-x-4" : "space-x-2";
+  const avatarSize = !window
+    ? "min-w-10 w-10 min-h-10 h-10"
+    : "min-w-5 w-5 min-h-5 h-5";
+  const spaceX =
+    !window && !(pathname.slice(0, 5) === "/post") ? "space-x-4" : "space-x-2";
   const hover = !window ? "hover:bg-gray-950" : "";
+
+  const avatarMap = new Map(
+    tweetAuthors?.map((author) => [author.id, author.pfp_link])
+  );
 
   useEffect(() => {
     if (isFocusedTweet) {
@@ -71,7 +82,15 @@ export default function TweetCard({
       }}
     >
       <div className={`${avatarSize} ml-2 mt-2`}>
-        <div className={`${avatarSize} bg-slate-200 rounded-full`} />
+        {!avatarMap.get(tweet.user_id) && (
+          <div className={`${avatarSize} bg-slate-200 rounded-full`} />
+        )}
+        {avatarMap.get(tweet.user_id) && (
+          <img
+            className={`${avatarSize} rounded-full`}
+            src={avatarMap.get(tweet.user_id)}
+          />
+        )}
       </div>
       <div className="flex flex-col w-full">
         <div className="flex items-center w-full justify-between">
@@ -157,8 +176,16 @@ export default function TweetCard({
       <div className="flex flex-col w-full ml-2 gap-y-2">
         <div className="flex flex-row items-center w-full justify-between">
           <div className="flex flex-row items-center gap-2">
-            <div className="w-10 h-10">
-              <div className="w-10 h-10 bg-slate-200 rounded-full" />
+            <div className="w-10 h-10 rounded-full">
+              {!avatarMap.get(tweet.user_id) && (
+                <div className="min-w-10 w-10 min-h-10 h-10 bg-slate-400 rounded-full" />
+              )}
+              {avatarMap.get(tweet.user_id) && (
+                <img
+                  className="min-w-10 w-10 min-h-10 h-10 rounded-full"
+                  src={avatarMap.get(tweet.user_id)}
+                />
+              )}
             </div>
             <div
               onClick={(e) => {

@@ -2,7 +2,6 @@ import { BiHomeCircle, BiUser } from "react-icons/bi";
 import { HiOutlineHashtag } from "react-icons/hi";
 import { BsBell, BsEnvelope, BsThreeDots, BsTwitterX } from "react-icons/bs";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./client-components/logout-button";
 
 const NAVIGATION_ITEMS = [
@@ -14,13 +13,13 @@ const NAVIGATION_ITEMS = [
   { title: "Profile", icon: BiUser },
 ];
 
-export async function LeftSidebar() {
-  const supabase = await createClient();
-
-  const { data } = await supabase.auth.getClaims();
-
-  const user = data?.claims;
-
+export async function LeftSidebar({
+  avatar_link,
+  username,
+}: {
+  avatar_link: string | null;
+  username: string | null;
+}) {
   return (
     <section className="w-[25%] sticky top-0 flex flex-col items-stretch h-screen">
       <div className="flex flex-col items-stretch h-full space-y-4 mt-4">
@@ -50,10 +49,18 @@ export async function LeftSidebar() {
       hover:bg-white/10 transition duration-200 w-full justify-between"
         >
           <div className="flex items-center space-x-2">
-            <div className="rounded-full bg-slate-400 w-10 h-10"></div>
-            <div className="text-left text-sm">
-              {user?.user_metadata.display_name}
+            <div className="rounded-full w-10 h-10">
+              {!avatar_link && (
+                <div className="w-10 h-10 bg-slate-400 rounded-full" />
+              )}
+              {avatar_link && (
+                <img
+                  className="rounded-full min-w-10 w-10 min-h-10 h-10"
+                  src={avatar_link}
+                />
+              )}
             </div>
+            <div className="text-left text-sm">{username}</div>
           </div>
           <div className="flex items-center gap-2">
             <LogoutButton />

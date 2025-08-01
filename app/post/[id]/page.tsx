@@ -10,6 +10,7 @@ export default async function PostPage(props: {
   params: Promise<{ id: string }>;
 }) {
   const params = await props.params;
+
   const supabase = await createClient();
 
   const { data: authUserData, error: authUserError } =
@@ -19,6 +20,21 @@ export default async function PostPage(props: {
     console.error("Error fetching authentication");
     redirect("/auth/login");
   }
+
+  const { data: authProfileData, error: authProfileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", authUserData.claims.sub);
+
+  if (authProfileError) {
+    console.error("Error fetching auth user's profile:", authProfileError);
+    return;
+  }
+
+  const authProfile = authProfileData?.[0];
+
+  const avatar_link: string | null = authProfile.pfp_link;
+  const username: string | null = authProfile.username;
 
   let { data: tweetArray, error: tweetFetchError } = await supabase
     .from("tweets")
@@ -56,12 +72,27 @@ export default async function PostPage(props: {
     return;
   }
 
-  const border = !replies ? "border-b-[0.5px] border-gray-600" : "";
+  let authorIds = [...new Set((replies ?? []).map((reply) => reply.user_id))];
+
+  authorIds.push(tweet.user_id);
+  if (parent) authorIds.push(parent.user_id);
+
+  let { data: tweetAuthors, error: tweetAuthorError } = await supabase
+    .from("profiles")
+    .select("*")
+    .in("id", authorIds);
+
+  if (tweetAuthorError) {
+    console.error("Avatar Fetch Error:", tweetAuthorError);
+  }
+
+  const border =
+    replies?.length === 0 ? "border-b-[0.5px] border-gray-600" : "";
 
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[90vw] w-full h-full flex relative">
-        <LeftSidebar />
+        <LeftSidebar avatar_link={avatar_link} username={username} />
         <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <div className="flex flex-row items-center mt-4 mb-2 ml-2">
             <BackButton />
@@ -70,12 +101,23 @@ export default async function PostPage(props: {
             </h1>
           </div>
           <div>
-            <TweetCard tweet={tweet} parent={parent} />
+            <TweetCard
+              tweet={tweet}
+              parent={parent}
+              tweetAuthors={tweetAuthors}
+            />
           </div>
           <div
             className={`px-4 pt-2 pb-4 ${border} flex items-stretch relative`}
           >
-            <div className="w-10 h-10 bg-slate-400 rounded-full flex-none"></div>
+            <div className="w-10 h-10 rounded-full flex-none">
+              {!avatar_link && (
+                <div className="w-10 h-10 bg-slate-400 rounded-full" />
+              )}
+              {avatar_link && (
+                <img className="w-10 h-10 rounded-full" src={avatar_link} />
+              )}
+            </div>
             <ComposeTweet />
           </div>
           <div className="flex flex-col border-gray-600">
@@ -83,7 +125,11 @@ export default async function PostPage(props: {
               .slice()
               .reverse()
               .map((reply, i) => (
-                <TweetCard key={reply.id} tweet={reply} />
+                <TweetCard
+                  key={reply.id}
+                  tweet={reply}
+                  tweetAuthors={tweetAuthors}
+                />
               ))}
           </div>
         </main>
