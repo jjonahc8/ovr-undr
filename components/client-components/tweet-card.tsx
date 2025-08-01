@@ -18,14 +18,16 @@ export default function TweetCard({
   tweet,
   parent,
   window,
-  tweetAuthors,
+  tweetsAuthorsParents,
   clientLikes,
+  likeMap,
 }: {
   tweet: any;
   parent?: any;
   window?: boolean;
-  tweetAuthors: any[] | null;
-  clientLikes: any[] | null;
+  tweetsAuthorsParents: any[] | null;
+  clientLikes?: any[] | null;
+  likeMap?: Map<string, number>;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -35,6 +37,7 @@ export default function TweetCard({
   const date = new Date(tweet.created_at);
   const formatted_date = format(date, "MMMM d, yyyy");
   const formatted_time = format(date, "h:mm a");
+  const [likeCount, setLikeCount] = useState(likeMap?.get(tweet.id));
 
   async function handleDelete() {
     const res = await fetch(`/api/delete-tweet?id=${tweet.id}`, {
@@ -60,6 +63,11 @@ export default function TweetCard({
       console.error("Error toggling like:", data.error);
     } else {
       setLiked(data.liked);
+      if (!liked) {
+        setLikeCount((likeCount ?? 0) + 1);
+      } else {
+        setLikeCount((likeCount ?? 0) - 1);
+      }
     }
   };
 
@@ -73,11 +81,10 @@ export default function TweetCard({
     <TweetCard
       tweet={parent}
       window={true}
-      tweetAuthors={tweetAuthors}
-      clientLikes={clientLikes}
+      tweetsAuthorsParents={tweetsAuthorsParents}
     />
   ) : null;
-  const topBorder = !window ? "border-t-[0.5px] border-gray-600" : "";
+  const topBorder = !window ? "border-b-[0.5px] border-gray-600" : "";
   const avatarSize = !window
     ? "min-w-10 w-10 min-h-10 h-10"
     : "min-w-5 w-5 min-h-5 h-5";
@@ -86,7 +93,7 @@ export default function TweetCard({
   const hover = !window ? "hover:bg-gray-950" : "";
 
   const avatarMap = new Map(
-    tweetAuthors?.map((author) => [author.id, author.pfp_link])
+    tweetsAuthorsParents?.map((tAP) => [tAP.user_id, tAP.author_pfp_link])
   );
 
   useEffect(() => {
@@ -179,24 +186,31 @@ export default function TweetCard({
         )}
         {!window && (
           <div className="flex flex-wrap items-center justify-between gap-4 mt-2 mr-2">
-            <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
+            <div className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
               <BsChat />
             </div>
-            <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
+            <div className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
               <AiOutlineRetweet />
             </div>
-            <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
-              <AiOutlineHeart
-                className={`${
-                  liked ? "text-red-500 fill-red-500" : ""
-                } w-5 h-5`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleLike(tweet.id);
-                }}
-              />
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleLike(tweet.id);
+              }}
+              className={`flex flex-row items-center justify-center cursor-pointer group ${
+                liked ? "text-red-500 fill-red-500" : "text-gray-500"
+              }`}
+            >
+              <div className="w-8 h-8 flex items-center justify-center rounded-full transition duration-200 group-hover:bg-white/10">
+                <AiOutlineHeart className="w-5 h-5 transition-colors duration-200 group-hover:text-red-500" />
+              </div>
+              {likeCount !== 0 && (
+                <div className="text-sm transition-colors duration-200 group-hover:text-red-500">
+                  {likeCount}
+                </div>
+              )}
             </div>
-            <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
+            <div className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
               <IoShareOutline />
             </div>
           </div>
@@ -274,14 +288,23 @@ export default function TweetCard({
           <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
             <AiOutlineRetweet className="w-5 h-5" />
           </div>
-          <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
-            <AiOutlineHeart
-              className={`${liked ? "text-red-500 fill-red-500" : ""} w-5 h-5`}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleLike(tweet.id);
-              }}
-            />
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleLike(tweet.id);
+            }}
+            className={`flex flex-row items-center justify-center cursor-pointer group ${
+              liked ? "text-red-500 fill-red-500" : "text-gray-500"
+            }`}
+          >
+            <div className="w-10 h-10 flex items-center justify-center rounded-full transition duration-200 group-hover:bg-white/10">
+              <AiOutlineHeart className="w-5 h-5 transition-colors duration-200 group-hover:text-red-500" />
+            </div>
+            {likeCount !== 0 && (
+              <div className="text-sm transition-colors duration-200 group-hover:text-red-500">
+                {likeCount}
+              </div>
+            )}
           </div>
           <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
             <IoShareOutline className="w-5 h-5" />

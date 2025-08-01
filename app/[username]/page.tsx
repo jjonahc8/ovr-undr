@@ -47,8 +47,12 @@ export default async function UserPage(props: {
     .select("*")
     .eq("username", profileUsername);
 
-  let { data: tweets, error: tweetFetchError } = await supabase
-    .from("tweets")
+  if (profileUserError) {
+    console.error("Error fetching profile:", profileUserError);
+  }
+
+  let { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
+    .from("tweets_with_authors_and_parents")
     .select("*")
     .eq("user_id", profileUser?.[0]?.id)
     .range(0, 100);
@@ -58,48 +62,42 @@ export default async function UserPage(props: {
     return;
   }
 
-  const tweetIds = [...new Set((tweets ?? []).map((tweet) => tweet.id))];
+  const tweetIds = (tweetsAuthorsParents ?? []).map((t) => t.id);
 
-  const { data: clientLikes, error: clientLikesFetchError } = await supabase
-    .from("likes")
-    .select("tweet_id")
-    .eq("user_id", authProfile.id)
-    .in("tweet_id", tweetIds);
+  // FETCH LIKES & LIKE COUNTS IN PARALLEL
+  const [
+    { data: likeCounts, error: likeCountError },
+    { data: clientLikes, error: clientLikesError },
+  ] = await Promise.all([
+    supabase.rpc("get_like_counts", { tweet_ids: tweetIds }),
+    supabase
+      .from("likes")
+      .select("tweet_id")
+      .eq("user_id", authProfile.id)
+      .in("tweet_id", tweetIds),
+  ]);
 
-  if (clientLikesFetchError) {
-    console.error("Error fetching client likes", clientLikesFetchError);
-  }
+  if (likeCountError) console.error("Like Count Error:", likeCountError);
+  if (clientLikesError) console.error("Client Likes Error:", clientLikesError);
 
-  const parentIds = [
-    ...new Set((tweets ?? []).map((tweet) => tweet.parent_id).filter(Boolean)),
-  ];
+  // Create a Map for like counts keyed by tweet_id
+  const likeMap = new Map<string, number>();
+  likeCounts?.forEach((row: any) => {
+    likeMap.set(row.tweet_id, Number(row.count) ?? 0);
+  });
 
-  let { data: parents, error: parentFetchError } = await supabase
-    .from("tweets")
-    .select("*")
-    .in("id", parentIds);
-
-  if (parentFetchError) {
-    console.error("Parent Fetch Error:", parentFetchError);
-    return;
-  }
-
-  const parentMap = new Map(parents?.map((parent) => [parent.id, parent]));
-
-  let authorIds = [...new Set((tweets ?? []).map((tweet) => tweet.user_id))];
-
-  let combinedSet = new Set([...parentIds, ...authorIds]);
-
-  authorIds = [...combinedSet];
-
-  let { data: tweetAuthors, error: tweetAuthorError } = await supabase
-    .from("profiles")
-    .select("*")
-    .in("id", authorIds);
-
-  if (tweetAuthorError) {
-    console.error("Avatar Fetch Error:", tweetAuthorError);
-  }
+  const parentMap = new Map(
+    tweetsAuthorsParents?.map((tAP) => [
+      tAP.parent_tweet_id,
+      {
+        id: tAP.parent_tweet_id,
+        text: tAP.parent_text,
+        created_at: tAP.parent_created_at,
+        user_id: tAP.parent_user_id,
+        author: tAP.parent_author_username,
+      },
+    ])
+  );
 
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
@@ -159,7 +157,7 @@ export default async function UserPage(props: {
           <div className="pt-2 px-4 text-gray-400">
             <p>Joined {generateDate(profileUser?.[0].created_at)}</p>
           </div>
-          <div className="flex flex-row items-center py-2 px-4">
+          <div className="flex flex-row items-center py-2 px-4 border-b-[0.5px] border-gray-600">
             <h1 className="font-bold mr-2 text-2xl">
               {profileUser?.[0]?.followers}
             </h1>
@@ -170,16 +168,24 @@ export default async function UserPage(props: {
             <p className="text-gray-400">Following</p>
           </div>
           <div className="flex flex-col">
-            {(tweets ?? [])
+            {(tweetsAuthorsParents ?? [])
               .slice()
               .reverse()
-              .map((tweet) => (
+              .map((tAP) => (
                 <TweetCard
-                  key={tweet.id}
-                  tweet={tweet}
-                  parent={parentMap.get(tweet.parent_id) ?? null}
-                  tweetAuthors={tweetAuthors}
+                  key={tAP.id}
+                  tweet={{
+                    id: tAP.id,
+                    text: tAP.text,
+                    created_at: tAP.created_at,
+                    user_id: tAP.user_id,
+                    parent_id: tAP.parent_id,
+                    author: tAP.author_username,
+                  }}
+                  parent={tAP.parent_id ? parentMap.get(tAP.parent_id) : null}
+                  tweetsAuthorsParents={tweetsAuthorsParents}
                   clientLikes={clientLikes}
+                  likeMap={likeMap}
                 />
               ))}
           </div>

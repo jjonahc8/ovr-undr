@@ -9,95 +9,78 @@ import React from "react";
 export default async function ProtectedPage() {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.getClaims();
+  // AUTH CHECK
+  const { data: authClaims, error: claimsError } =
+    await supabase.auth.getClaims();
 
-  if (error || !data?.claims) {
+  if (claimsError || !authClaims?.claims) {
     redirect("/auth/login");
   }
 
+  const userId = authClaims.claims.sub;
+
+  // GET USER PROFILE
   const { data: authProfileData, error: authProfileError } = await supabase
     .from("profiles")
     .select("*")
-    .eq("id", data.claims.sub);
+    .eq("id", userId)
+    .single();
 
-  if (authProfileError) {
+  if (authProfileError || !authProfileData) {
     console.error("Error fetching auth user's profile:", authProfileError);
     return;
   }
 
-  const authProfile = authProfileData?.[0];
+  const avatar_link = authProfileData.pfp_link ?? null;
+  const username = authProfileData.username ?? null;
 
-  const avatar_link: string | null = authProfile.pfp_link;
-  const username: string | null = authProfile.username;
-
-  const { data: tweets, error: tweetFetchError } = await supabase
-    .from("tweets")
+  // FETCH TWEETS WITH AUTHORS AND PARENTS FROM VIEW
+  const { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
+    .from("tweets_with_authors_and_parents")
     .select("*")
     .range(0, 100);
 
-  if (tweetFetchError) {
-    console.error("Tweet Fetch Error:", tweetFetchError);
+  if (tweetFetchError || !tweetsAuthorsParents) {
+    console.error("Error fetching tweets with parents:", tweetFetchError);
     return;
   }
 
-  const tweetIds = [...new Set((tweets ?? []).map((tweet) => tweet.id))];
+  // Extract tweet IDs for likes fetching
+  const tweetIds = tweetsAuthorsParents.map((t) => t.id);
 
-  const { data: clientLikes, error: clientLikesFetchError } = await supabase
-    .from("likes")
-    .select("tweet_id")
-    .eq("user_id", authProfile.id)
-    .in("tweet_id", tweetIds);
+  // FETCH LIKES & LIKE COUNTS IN PARALLEL
+  const [
+    { data: likeCounts, error: likeCountError },
+    { data: clientLikes, error: clientLikesError },
+  ] = await Promise.all([
+    supabase.rpc("get_like_counts", { tweet_ids: tweetIds }),
+    supabase
+      .from("likes")
+      .select("tweet_id")
+      .eq("user_id", userId)
+      .in("tweet_id", tweetIds),
+  ]);
 
-  if (clientLikesFetchError) {
-    console.error("Error fetching client likes", clientLikesFetchError);
-  }
+  if (likeCountError) console.error("Like Count Error:", likeCountError);
+  if (clientLikesError) console.error("Client Likes Error:", clientLikesError);
 
-  const parentIds = [
-    ...new Set((tweets ?? []).map((tweet) => tweet.parent_id).filter(Boolean)),
-  ];
+  // Create a Map for like counts keyed by tweet_id
+  const likeMap = new Map<string, number>();
+  likeCounts?.forEach((row: any) => {
+    likeMap.set(row.tweet_id, Number(row.count) ?? 0);
+  });
 
-  const { data: parents, error: parentFetchError } = await supabase
-    .from("tweets")
-    .select("*")
-    .in("id", parentIds);
-
-  if (parentFetchError) {
-    console.error("Parent Fetch Error:", parentFetchError);
-    return;
-  }
-
-  let authorIds = [...new Set((tweets ?? []).map((tweet) => tweet.user_id))];
-
-  let combinedSet = new Set([...parentIds, ...authorIds]);
-
-  authorIds = [...combinedSet];
-
-  const { data: tweetAuthors, error: tweetAuthorError } = await supabase
-    .from("profiles")
-    .select("*")
-    .in("id", authorIds);
-
-  if (tweetAuthorError) {
-    console.error("Avatar Fetch Error:", tweetAuthorError);
-  }
-
+  // PAGE RENDER
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[90vw] w-full h-full flex relative">
         <LeftSidebar avatar_link={avatar_link} username={username} />
-        {(async () => {
-          const mainComponentResult = await MainComponent(
-            avatar_link,
-            tweets,
-            parents,
-            tweetAuthors,
-            clientLikes
-          );
-          if (React.isValidElement(mainComponentResult)) {
-            return mainComponentResult;
-          }
-          return <div>Error loading timeline</div>;
-        })()}
+        {(await MainComponent(
+          avatar_link,
+          tweetsAuthorsParents,
+          clientLikes ?? [],
+          likeMap
+        )) ?? <div>Error loading timeline</div>}
         <RightSection />
       </div>
     </div>

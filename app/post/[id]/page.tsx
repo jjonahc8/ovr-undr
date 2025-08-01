@@ -36,72 +36,65 @@ export default async function PostPage(props: {
   const avatar_link: string | null = authProfile.pfp_link;
   const username: string | null = authProfile.username;
 
-  let { data: tweetArray, error: tweetFetchError } = await supabase
-    .from("tweets")
+  const { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
+    .from("tweets_with_authors_and_parents")
     .select("*")
-    .eq("id", params.id);
-  const tweet = tweetArray?.[0];
+    .or(`id.eq.${params.id},parent_id.eq.${params.id}`);
 
   if (tweetFetchError) {
-    console.error("Error fetching tweet:", tweetFetchError);
+    console.error("Error fetching tweets and replies:", tweetFetchError);
     return;
   }
 
-  const parentID = tweet?.parent_id;
+  const tAP = tweetsAuthorsParents.find((t) => t.id === params.id);
 
-  if (parentID) {
-    let { data: parentData, error: parentFetchError } = await supabase
-      .from("tweets")
-      .select("*")
-      .eq("id", parentID);
+  const tweet = {
+    id: tAP.id,
+    text: tAP.text,
+    created_at: tAP.created_at,
+    user_id: tAP.user_id,
+    parent_id: tAP.parent_id,
+    author: tAP.author_username,
+  };
 
-    if (parentFetchError) {
-      console.error("Error fetching tweet parent:", tweetFetchError);
-      return;
-    }
-    var parent = parentData?.[0];
+  // parent
+  const parent_id = tAP.parent_tweet_id;
+  let parent = null;
+  if (parent_id) {
+    parent = {
+      id: tAP.parent_tweet_id,
+      text: tAP.parent_text,
+      created_at: tAP.created_at,
+      user_id: tAP.user_id,
+      author: tAP.parent_author_username,
+    };
   }
 
-  let { data: replies, error: replyFetchError } = await supabase
-    .from("tweets")
-    .select("*")
-    .eq("parent_id", params.id);
+  const replies = tweetsAuthorsParents.filter((t) => t.parent_id === params.id);
 
-  if (replyFetchError) {
-    console.error("Error fetching replies:", replyFetchError);
-    return;
-  }
+  const tweetIds = tweetsAuthorsParents.map((t) => t.id);
 
-  let tweetIds = [...new Set((replies ?? []).map((reply) => reply.id))];
+  // FETCH LIKES & LIKE COUNTS IN PARALLEL
+  const [
+    { data: likeCounts, error: likeCountError },
+    { data: clientLikes, error: clientLikesError },
+  ] = await Promise.all([
+    supabase.rpc("get_like_counts", { tweet_ids: tweetIds }),
+    supabase
+      .from("likes")
+      .select("tweet_id")
+      .eq("user_id", authProfile.id)
+      .in("tweet_id", tweetIds),
+  ]);
 
-  tweetIds.push(tweet.id);
+  if (likeCountError) console.error("Like Count Error:", likeCountError);
+  if (clientLikesError) console.error("Client Likes Error:", clientLikesError);
 
-  const { data: clientLikes, error: clientLikesFetchError } = await supabase
-    .from("likes")
-    .select("tweet_id")
-    .eq("user_id", authProfile.id)
-    .in("tweet_id", tweetIds);
-
-  if (clientLikesFetchError) {
-    console.error("Error fetching client likes", clientLikesFetchError);
-  }
-
-  let authorIds = [...new Set((replies ?? []).map((reply) => reply.user_id))];
-
-  authorIds.push(tweet.user_id);
-  if (parent) authorIds.push(parent.user_id);
-
-  let { data: tweetAuthors, error: tweetAuthorError } = await supabase
-    .from("profiles")
-    .select("*")
-    .in("id", authorIds);
-
-  if (tweetAuthorError) {
-    console.error("Avatar Fetch Error:", tweetAuthorError);
-  }
-
-  const border =
-    replies?.length === 0 ? "border-b-[0.5px] border-gray-600" : "";
+  // Create a Map for like counts keyed by tweet_id
+  const likeMap = new Map<string, number>();
+  likeCounts?.forEach((row: any) => {
+    likeMap.set(row.tweet_id, Number(row.count) ?? 0);
+  });
 
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
@@ -118,12 +111,13 @@ export default async function PostPage(props: {
             <TweetCard
               tweet={tweet}
               parent={parent}
-              tweetAuthors={tweetAuthors}
+              tweetsAuthorsParents={tweetsAuthorsParents}
               clientLikes={clientLikes}
+              likeMap={likeMap}
             />
           </div>
           <div
-            className={`px-4 pt-2 pb-4 ${border} flex items-stretch relative`}
+            className={`px-4 pt-2 pb-4 border-b-[0.5px] border-gray-600 flex items-stretch relative`}
           >
             <div className="w-10 h-10 rounded-full flex-none">
               {!avatar_link && (
@@ -142,9 +136,17 @@ export default async function PostPage(props: {
               .map((reply, i) => (
                 <TweetCard
                   key={reply.id}
-                  tweet={reply}
-                  tweetAuthors={tweetAuthors}
+                  tweet={{
+                    id: reply.id,
+                    text: reply.text,
+                    created_at: reply.created_at,
+                    user_id: reply.user_id,
+                    parent_id: reply.parent_id,
+                    author: reply.author_username,
+                  }}
+                  tweetsAuthorsParents={tweetsAuthorsParents}
                   clientLikes={clientLikes}
+                  likeMap={likeMap}
                 />
               ))}
           </div>
