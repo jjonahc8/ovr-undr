@@ -19,15 +19,18 @@ export default function TweetCard({
   parent,
   window,
   tweetAuthors,
+  clientLikes,
 }: {
   tweet: any;
   parent?: any;
   window?: boolean;
   tweetAuthors: any[] | null;
+  clientLikes: any[] | null;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [focused, setFocused] = useState(false);
+  const [liked, setLiked] = useState<boolean>(false);
   const pathname = usePathname();
   const date = new Date(tweet.created_at);
   const formatted_date = format(date, "MMMM d, yyyy");
@@ -47,6 +50,19 @@ export default function TweetCard({
     }
   }
 
+  const toggleLike = async (tweetId: string) => {
+    const res = await fetch(`/api/like-tweet?id=${tweetId}`, {
+      method: "POST",
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      console.error("Error toggling like:", data.error);
+    } else {
+      setLiked(data.liked);
+    }
+  };
+
   const handleRedirect = (route: string) => {
     router.push(`/${route}`);
   };
@@ -54,7 +70,12 @@ export default function TweetCard({
   const isFocusedTweet = tweet.id === pathname.slice(6);
 
   const parentData = parent ? (
-    <TweetCard tweet={parent} window={true} tweetAuthors={tweetAuthors} />
+    <TweetCard
+      tweet={parent}
+      window={true}
+      tweetAuthors={tweetAuthors}
+      clientLikes={clientLikes}
+    />
   ) : null;
   const topBorder = !window ? "border-t-[0.5px] border-gray-600" : "";
   const avatarSize = !window
@@ -71,6 +92,9 @@ export default function TweetCard({
   useEffect(() => {
     if (isFocusedTweet) {
       setFocused(true);
+    }
+    if (clientLikes?.some((like) => like.tweet_id === tweet.id)) {
+      setLiked(true);
     }
   }, [pathname, isFocusedTweet]);
 
@@ -162,7 +186,15 @@ export default function TweetCard({
               <AiOutlineRetweet />
             </div>
             <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
-              <AiOutlineHeart />
+              <AiOutlineHeart
+                className={`${
+                  liked ? "text-red-500 fill-red-500" : ""
+                } w-5 h-5`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleLike(tweet.id);
+                }}
+              />
             </div>
             <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
               <IoShareOutline />
@@ -243,7 +275,13 @@ export default function TweetCard({
             <AiOutlineRetweet className="w-5 h-5" />
           </div>
           <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
-            <AiOutlineHeart className="w-5 h-5" />
+            <AiOutlineHeart
+              className={`${liked ? "text-red-500 fill-red-500" : ""} w-5 h-5`}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleLike(tweet.id);
+              }}
+            />
           </div>
           <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
             <IoShareOutline className="w-5 h-5" />

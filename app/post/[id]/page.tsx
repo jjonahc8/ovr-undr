@@ -72,6 +72,20 @@ export default async function PostPage(props: {
     return;
   }
 
+  let tweetIds = [...new Set((replies ?? []).map((reply) => reply.id))];
+
+  tweetIds.push(tweet.id);
+
+  const { data: clientLikes, error: clientLikesFetchError } = await supabase
+    .from("likes")
+    .select("tweet_id")
+    .eq("user_id", authProfile.id)
+    .in("tweet_id", tweetIds);
+
+  if (clientLikesFetchError) {
+    console.error("Error fetching client likes", clientLikesFetchError);
+  }
+
   let authorIds = [...new Set((replies ?? []).map((reply) => reply.user_id))];
 
   authorIds.push(tweet.user_id);
@@ -105,6 +119,7 @@ export default async function PostPage(props: {
               tweet={tweet}
               parent={parent}
               tweetAuthors={tweetAuthors}
+              clientLikes={clientLikes}
             />
           </div>
           <div
@@ -129,6 +144,7 @@ export default async function PostPage(props: {
                   key={reply.id}
                   tweet={reply}
                   tweetAuthors={tweetAuthors}
+                  clientLikes={clientLikes}
                 />
               ))}
           </div>

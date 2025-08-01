@@ -58,6 +58,18 @@ export default async function UserPage(props: {
     return;
   }
 
+  const tweetIds = [...new Set((tweets ?? []).map((tweet) => tweet.id))];
+
+  const { data: clientLikes, error: clientLikesFetchError } = await supabase
+    .from("likes")
+    .select("tweet_id")
+    .eq("user_id", authProfile.id)
+    .in("tweet_id", tweetIds);
+
+  if (clientLikesFetchError) {
+    console.error("Error fetching client likes", clientLikesFetchError);
+  }
+
   const parentIds = [
     ...new Set((tweets ?? []).map((tweet) => tweet.parent_id).filter(Boolean)),
   ];
@@ -167,6 +179,7 @@ export default async function UserPage(props: {
                   tweet={tweet}
                   parent={parentMap.get(tweet.parent_id) ?? null}
                   tweetAuthors={tweetAuthors}
+                  clientLikes={clientLikes}
                 />
               ))}
           </div>

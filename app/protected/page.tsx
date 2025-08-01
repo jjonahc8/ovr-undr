@@ -30,7 +30,7 @@ export default async function ProtectedPage() {
   const avatar_link: string | null = authProfile.pfp_link;
   const username: string | null = authProfile.username;
 
-  let { data: tweets, error: tweetFetchError } = await supabase
+  const { data: tweets, error: tweetFetchError } = await supabase
     .from("tweets")
     .select("*")
     .range(0, 100);
@@ -40,11 +40,23 @@ export default async function ProtectedPage() {
     return;
   }
 
+  const tweetIds = [...new Set((tweets ?? []).map((tweet) => tweet.id))];
+
+  const { data: clientLikes, error: clientLikesFetchError } = await supabase
+    .from("likes")
+    .select("tweet_id")
+    .eq("user_id", authProfile.id)
+    .in("tweet_id", tweetIds);
+
+  if (clientLikesFetchError) {
+    console.error("Error fetching client likes", clientLikesFetchError);
+  }
+
   const parentIds = [
     ...new Set((tweets ?? []).map((tweet) => tweet.parent_id).filter(Boolean)),
   ];
 
-  let { data: parents, error: parentFetchError } = await supabase
+  const { data: parents, error: parentFetchError } = await supabase
     .from("tweets")
     .select("*")
     .in("id", parentIds);
@@ -60,7 +72,7 @@ export default async function ProtectedPage() {
 
   authorIds = [...combinedSet];
 
-  let { data: tweetAuthors, error: tweetAuthorError } = await supabase
+  const { data: tweetAuthors, error: tweetAuthorError } = await supabase
     .from("profiles")
     .select("*")
     .in("id", authorIds);
@@ -78,7 +90,8 @@ export default async function ProtectedPage() {
             avatar_link,
             tweets,
             parents,
-            tweetAuthors
+            tweetAuthors,
+            clientLikes
           );
           if (React.isValidElement(mainComponentResult)) {
             return mainComponentResult;

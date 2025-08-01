@@ -5,7 +5,8 @@ const MainComponent = async function (
   avatar_link: string | null,
   tweets: any[] | null,
   parents: any[] | null,
-  tweetAuthors: any[] | null
+  tweetAuthors: any[] | null,
+  clientLikes: any[] | null
 ) {
   const timelineLength = tweets?.length;
 
@@ -38,6 +39,7 @@ const MainComponent = async function (
                 tweet={tweet}
                 parent={parentMap.get(tweet.parent_id) ?? null}
                 tweetAuthors={tweetAuthors}
+                clientLikes={clientLikes}
               />
             ))}
         </div>
