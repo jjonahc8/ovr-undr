@@ -9,14 +9,12 @@ import { Suspense } from "react";
 export default async function ProtectedPage() {
   const supabase = await createClient();
 
-  // AUTH
   const { data: authClaims, error: claimsError } =
     await supabase.auth.getClaims();
   if (claimsError || !authClaims?.claims) redirect("/auth/login");
 
   const userId = authClaims.claims.sub;
 
-  // PROFILE
   const { data: authProfileData, error: authProfileError } = await supabase
     .from("profiles")
     .select("*")

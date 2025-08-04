@@ -23,7 +23,6 @@ export default async function ReplyFeedTimeline({
 
   const tweetIds = replies.map((t) => t.id);
 
-  // FETCH LIKES & LIKE COUNTS IN PARALLEL
   const [
     { data: likeCounts, error: likeCountError },
     { data: clientLikes, error: clientLikesError },
@@ -39,7 +38,6 @@ export default async function ReplyFeedTimeline({
   if (likeCountError) console.error("Like Count Error:", likeCountError);
   if (clientLikesError) console.error("Client Likes Error:", clientLikesError);
 
-  // Create a Map for like counts keyed by tweet_id
   const likeMap = new Map<string, number>();
   likeCounts?.forEach((row: any) => {
     likeMap.set(row.tweet_id, Number(row.count) ?? 0);

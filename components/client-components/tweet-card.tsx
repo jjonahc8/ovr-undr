@@ -13,6 +13,7 @@ import { useState, useTransition, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import generateDate from "../utilities/generateDate";
 import { format } from "date-fns";
+import NavigateWrapper from "./navigate";
 
 export default function TweetCard({
   tweet,
@@ -113,28 +114,26 @@ export default function TweetCard({
       }}
     >
       <div className={`${avatarSize} ml-2 mt-2`}>
-        {!avatarMap.get(tweet.user_id) && (
-          <div className={`${avatarSize} bg-slate-200 rounded-full`} />
-        )}
-        {avatarMap.get(tweet.user_id) && (
-          <img
-            className={`${avatarSize} rounded-full`}
-            src={avatarMap.get(tweet.user_id)}
-          />
-        )}
+        <NavigateWrapper to={tweet.author} stopPropagation={true}>
+          {!avatarMap.get(tweet.user_id) && (
+            <div className={`${avatarSize} bg-slate-200 rounded-full`} />
+          )}
+          {avatarMap.get(tweet.user_id) && (
+            <img
+              className={`${avatarSize} rounded-full`}
+              src={avatarMap.get(tweet.user_id)}
+            />
+          )}
+        </NavigateWrapper>
       </div>
       <div className="flex flex-col w-full">
         <div className="flex items-center w-full justify-between">
           <div className="flex items-center justify-between w-full mt-1">
             <div className="flex flex-row items-center">
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRedirect(tweet.author);
-                }}
-                className="font-bold hover:underline cursor-pointer"
-              >
-                {tweet.author}
+              <div className="font-bold hover:underline cursor-pointer">
+                <NavigateWrapper to={tweet.author} stopPropagation={true}>
+                  {tweet.author}
+                </NavigateWrapper>
               </div>
               <div className="text-gray-500">
                 <BsDot />
@@ -223,24 +222,23 @@ export default function TweetCard({
         <div className="flex flex-row items-center w-full justify-between">
           <div className="flex flex-row items-center gap-2">
             <div className="w-10 h-10 rounded-full">
-              {!avatarMap.get(tweet.user_id) && (
-                <div className="min-w-10 w-10 min-h-10 h-10 bg-slate-400 rounded-full" />
-              )}
-              {avatarMap.get(tweet.user_id) && (
-                <img
-                  className="min-w-10 w-10 min-h-10 h-10 rounded-full"
-                  src={avatarMap.get(tweet.user_id)}
-                />
-              )}
+              <NavigateWrapper to={tweet.author} stopPropagation={true}>
+                {!avatarMap.get(tweet.user_id) && (
+                  <div className="min-w-10 w-10 min-h-10 h-10 bg-slate-400 rounded-full" />
+                )}
+                {avatarMap.get(tweet.user_id) && (
+                  <img
+                    className="min-w-10 w-10 min-h-10 h-10 rounded-full"
+                    src={avatarMap.get(tweet.user_id)}
+                  />
+                )}
+              </NavigateWrapper>
             </div>
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRedirect(tweet.author);
-              }}
-              className="font-bold hover:underline cursor-pointer text-lg"
-            >
-              {tweet.author}
+
+            <div className="font-bold hover:underline cursor-pointer text-lg">
+              <NavigateWrapper to={tweet.author} stopPropagation={true}>
+                {tweet.author}
+              </NavigateWrapper>
             </div>
           </div>
           <div className="text-gray-500 h-4">

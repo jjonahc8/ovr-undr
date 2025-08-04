@@ -1,24 +1,21 @@
-// components/MainProfileTimeline.tsx
 import { createClient } from "@/lib/supabase/server";
 import MainComponent from "../MainComponent";
 
 export default async function MainFeedTimeline({ userId }: { userId: string }) {
   const supabase = await createClient();
 
-  // TWEETS
   const { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
     .from("tweets_with_authors_and_parents")
     .select("*")
     .range(0, 100);
 
   if (tweetFetchError || !tweetsAuthorsParents) {
-    console.error("Error fetching tweets:", tweetFetchError);
+    console.error("Error fetching tweests:", tweetFetchError);
     return null;
   }
 
   const tweetIds = tweetsAuthorsParents.map((t) => t.id);
 
-  // LIKES
   const [{ data: likeCounts }, { data: clientLikes }] = await Promise.all([
     supabase.rpc("get_like_counts", { tweet_ids: tweetIds }),
     supabase
