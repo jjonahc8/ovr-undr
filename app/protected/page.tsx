@@ -57,7 +57,7 @@ export default async function ProtectedPage() {
               </div>
             }
           >
-            <MainFeedTimeline avatar_link={avatar_link} userId={userId} />
+            <MainFeedTimeline userId={userId} />
           </Suspense>
         </main>
         <RightSection />

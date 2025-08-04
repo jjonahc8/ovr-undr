@@ -29,6 +29,7 @@ export default async function FocusedTweet({
     user_id: tAP.user_id,
     parent_id: tAP.parent_id,
     author: tAP.author_username,
+    file_link: tAP.file_link,
   };
 
   // parent
@@ -41,6 +42,7 @@ export default async function FocusedTweet({
       created_at: tAP.created_at,
       user_id: tAP.user_id,
       author: tAP.parent_author_username,
+      file_link: tAP.parent_file_link,
     };
   }
 

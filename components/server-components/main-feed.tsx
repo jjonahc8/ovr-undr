@@ -2,13 +2,7 @@
 import { createClient } from "@/lib/supabase/server";
 import MainComponent from "../MainComponent";
 
-export default async function MainFeedTimeline({
-  avatar_link,
-  userId,
-}: {
-  avatar_link: string | null;
-  userId: string;
-}) {
+export default async function MainFeedTimeline({ userId }: { userId: string }) {
   const supabase = await createClient();
 
   // TWEETS
@@ -39,10 +33,5 @@ export default async function MainFeedTimeline({
     likeMap.set(row.tweet_id, Number(row.count) ?? 0);
   });
 
-  return await MainComponent(
-    avatar_link,
-    tweetsAuthorsParents,
-    clientLikes ?? [],
-    likeMap
-  );
+  return await MainComponent(tweetsAuthorsParents, clientLikes ?? [], likeMap);
 }

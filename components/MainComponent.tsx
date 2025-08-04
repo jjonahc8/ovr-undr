@@ -1,8 +1,6 @@
-import ComposeTweet from "./server-components/compose-tweet";
 import TweetCard from "./client-components/tweet-card";
 
 const MainComponent = async function (
-  avatar_link: string | null,
   tweetsAuthorsParents: any[] | null,
   clientLikes: any[] | null,
   likeMap: Map<string, number>
@@ -18,6 +16,7 @@ const MainComponent = async function (
         created_at: tAP.parent_created_at,
         user_id: tAP.parent_user_id,
         author: tAP.parent_author_username,
+        file_link: tAP.parent_file_link,
       },
     ])
   );
@@ -38,6 +37,7 @@ const MainComponent = async function (
                 user_id: tAP.user_id,
                 parent_id: tAP.parent_id,
                 author: tAP.author_username,
+                file_link: tAP.file_link,
               }}
               parent={tAP.parent_id ? parentMap.get(tAP.parent_id) : null}
               tweetsAuthorsParents={tweetsAuthorsParents}

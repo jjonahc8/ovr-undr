@@ -12,40 +12,16 @@ export default async function ReplyFeedTimeline({
   const { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
     .from("tweets_with_authors_and_parents")
     .select("*")
-    .or(`id.eq.${params.id},parent_id.eq.${params.id}`);
+    .eq("parent_id", params.id);
 
   if (tweetFetchError) {
     console.error("Error fetching tweets and replies:", tweetFetchError);
     return;
   }
 
-  const tAP = tweetsAuthorsParents.find((t) => t.id === params.id);
+  const replies = tweetsAuthorsParents;
 
-  const tweet = {
-    id: tAP.id,
-    text: tAP.text,
-    created_at: tAP.created_at,
-    user_id: tAP.user_id,
-    parent_id: tAP.parent_id,
-    author: tAP.author_username,
-  };
-
-  // parent
-  const parent_id = tAP.parent_tweet_id;
-  let parent = null;
-  if (parent_id) {
-    parent = {
-      id: tAP.parent_tweet_id,
-      text: tAP.parent_text,
-      created_at: tAP.created_at,
-      user_id: tAP.user_id,
-      author: tAP.parent_author_username,
-    };
-  }
-
-  const replies = tweetsAuthorsParents.filter((t) => t.parent_id === params.id);
-
-  const tweetIds = tweetsAuthorsParents.map((t) => t.id);
+  const tweetIds = replies.map((t) => t.id);
 
   // FETCH LIKES & LIKE COUNTS IN PARALLEL
   const [
@@ -83,6 +59,7 @@ export default async function ReplyFeedTimeline({
               user_id: reply.user_id,
               parent_id: reply.parent_id,
               author: reply.author_username,
+              file_link: reply.file_link,
             }}
             tweetsAuthorsParents={tweetsAuthorsParents}
             clientLikes={clientLikes}
