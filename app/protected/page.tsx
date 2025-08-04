@@ -1,25 +1,22 @@
-"use server";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import LeftSidebar from "@/components/LeftSidebar";
-import MainComponent from "@/components/MainComponent";
 import RightSection from "@/components/RightSection";
-import React from "react";
+import ComposeTweet from "@/components/server-components/compose-tweet";
+import MainFeedTimeline from "@/components/server-components/main-feed";
+import { Suspense } from "react";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
 
-  // AUTH CHECK
+  // AUTH
   const { data: authClaims, error: claimsError } =
     await supabase.auth.getClaims();
-
-  if (claimsError || !authClaims?.claims) {
-    redirect("/auth/login");
-  }
+  if (claimsError || !authClaims?.claims) redirect("/auth/login");
 
   const userId = authClaims.claims.sub;
 
-  // GET USER PROFILE
+  // PROFILE
   const { data: authProfileData, error: authProfileError } = await supabase
     .from("profiles")
     .select("*")
@@ -27,60 +24,42 @@ export default async function ProtectedPage() {
     .single();
 
   if (authProfileError || !authProfileData) {
-    console.error("Error fetching auth user's profile:", authProfileError);
+    console.error("Error fetching profile:", authProfileError);
     return;
   }
 
   const avatar_link = authProfileData.pfp_link ?? null;
   const username = authProfileData.username ?? null;
 
-  // FETCH TWEETS WITH AUTHORS AND PARENTS FROM VIEW
-  const { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
-    .from("tweets_with_authors_and_parents")
-    .select("*")
-    .range(0, 100);
-
-  if (tweetFetchError || !tweetsAuthorsParents) {
-    console.error("Error fetching tweets with parents:", tweetFetchError);
-    return;
-  }
-
-  // Extract tweet IDs for likes fetching
-  const tweetIds = tweetsAuthorsParents.map((t) => t.id);
-
-  // FETCH LIKES & LIKE COUNTS IN PARALLEL
-  const [
-    { data: likeCounts, error: likeCountError },
-    { data: clientLikes, error: clientLikesError },
-  ] = await Promise.all([
-    supabase.rpc("get_like_counts", { tweet_ids: tweetIds }),
-    supabase
-      .from("likes")
-      .select("tweet_id")
-      .eq("user_id", userId)
-      .in("tweet_id", tweetIds),
-  ]);
-
-  if (likeCountError) console.error("Like Count Error:", likeCountError);
-  if (clientLikesError) console.error("Client Likes Error:", clientLikesError);
-
-  // Create a Map for like counts keyed by tweet_id
-  const likeMap = new Map<string, number>();
-  likeCounts?.forEach((row: any) => {
-    likeMap.set(row.tweet_id, Number(row.count) ?? 0);
-  });
-
-  // PAGE RENDER
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[90vw] w-full h-full flex relative">
         <LeftSidebar avatar_link={avatar_link} username={username} />
-        {(await MainComponent(
-          avatar_link,
-          tweetsAuthorsParents,
-          clientLikes ?? [],
-          likeMap
-        )) ?? <div>Error loading timeline</div>}
+        <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
+          <div className="backdrop-blur-xl backdrop-brightness-50 sticky top-0">
+            <h1 className="text-xl font-bold ml-6 mt-5 mb-4">Home</h1>
+          </div>
+          <div className="border-t-[0.5px] border-b-[0.5px] px-4 flex items-stretch py-4 border-gray-600 relative">
+            <div className="w-11 h-11 rounded-full flex-none mt-3">
+              {!avatar_link && (
+                <div className="w-11 h-11 bg-slate-400 rounded-full" />
+              )}
+              {avatar_link && (
+                <img className="w-11 h-11 rounded-full" src={avatar_link} />
+              )}
+            </div>
+            <ComposeTweet />
+          </div>
+          <Suspense
+            fallback={
+              <div className="flex-1 flex items-center justify-center h-full">
+                <div className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full" />
+              </div>
+            }
+          >
+            <MainFeedTimeline avatar_link={avatar_link} userId={userId} />
+          </Suspense>
+        </main>
         <RightSection />
       </div>
     </div>
