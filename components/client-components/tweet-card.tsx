@@ -222,7 +222,7 @@ export default function TweetCard({
         <div className="flex flex-row items-center w-full justify-between">
           <div className="flex flex-row items-center gap-2">
             <div className="w-10 h-10 rounded-full">
-              <NavigateWrapper to={tweet.author} stopPropagation={true}>
+              <NavigateWrapper to={`/${tweet.author}`} stopPropagation={true}>
                 {!avatarMap.get(tweet.user_id) && (
                   <div className="min-w-10 w-10 min-h-10 h-10 bg-slate-400 rounded-full" />
                 )}
@@ -236,7 +236,7 @@ export default function TweetCard({
             </div>
 
             <div className="font-bold hover:underline cursor-pointer text-lg">
-              <NavigateWrapper to={tweet.author} stopPropagation={true}>
+              <NavigateWrapper to={`/${tweet.author}`} stopPropagation={true}>
                 {tweet.author}
               </NavigateWrapper>
             </div>
