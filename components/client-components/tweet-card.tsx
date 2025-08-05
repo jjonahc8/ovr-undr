@@ -22,6 +22,7 @@ export default function TweetCard({
   tweetsAuthorsParents,
   clientLikes,
   likeMap,
+  commentCountMap,
 }: {
   tweet: any;
   parent?: any;
@@ -29,6 +30,7 @@ export default function TweetCard({
   tweetsAuthorsParents: any[] | null;
   clientLikes?: any[] | null;
   likeMap?: Map<string, number>;
+  commentCountMap?: Map<string, number>;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -39,6 +41,9 @@ export default function TweetCard({
   const formatted_date = format(date, "MMMM d, yyyy");
   const formatted_time = format(date, "h:mm a");
   const [likeCount, setLikeCount] = useState(likeMap?.get(tweet.id));
+  const [commentCount, setCommentCount] = useState(
+    commentCountMap?.get(tweet.id)
+  );
 
   async function handleDelete() {
     const res = await fetch(`/api/delete-tweet?id=${tweet.id}`, {
@@ -185,8 +190,17 @@ export default function TweetCard({
         )}
         {!window && (
           <div className="flex flex-wrap items-center justify-between gap-4 mt-2 mr-2">
-            <div className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
-              <BsChat />
+            <div
+              className={`flex flex-row items-center justify-center cursor-pointer group text-gray-500`}
+            >
+              <div className="w-8 h-8 flex items-center justify-center rounded-full transition duration-200 group-hover:bg-white/10">
+                <BsChat className="w-5 h-5 transition-colors duration-200 group-hover:text-white" />
+              </div>
+              {commentCount !== 0 && (
+                <div className="text-sm transition-colors duration-200 group-hover:text-white">
+                  {commentCount}
+                </div>
+              )}
             </div>
             <div className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
               <AiOutlineRetweet />
@@ -280,8 +294,17 @@ export default function TweetCard({
           <div className="text-md">{formatted_date}</div>
         </div>
         <div className="flex flex-wrap items-center justify-between w-full border-y-[0.5px] mt-2">
-          <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
-            <BsChat className="w-5 h-5" />
+          <div
+            className={`flex flex-row items-center justify-center cursor-pointer group text-gray-500`}
+          >
+            <div className="w-10 h-10 flex items-center justify-center rounded-full transition duration-200 group-hover:bg-white/10">
+              <BsChat className="w-5 h-5 transition-colors duration-200 group-hover:text-white" />
+            </div>
+            {commentCount !== 0 && (
+              <div className="text-sm transition-colors duration-200 group-hover:text-white">
+                {commentCount}
+              </div>
+            )}
           </div>
           <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
             <AiOutlineRetweet className="w-5 h-5" />

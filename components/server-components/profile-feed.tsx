@@ -26,6 +26,7 @@ export default async function ProfileFeedTimeline({
   const [
     { data: likeCounts, error: likeCountError },
     { data: clientLikes, error: clientLikesError },
+    { data: replyCounts, error: replyCountError },
   ] = await Promise.all([
     supabase.rpc("get_like_counts", { tweet_ids: tweetIds }),
     supabase
@@ -33,10 +34,17 @@ export default async function ProfileFeedTimeline({
       .select("tweet_id")
       .eq("user_id", authProfile.id)
       .in("tweet_id", tweetIds),
+    supabase.rpc("get_reply_counts", { tweet_ids: tweetIds }),
   ]);
 
   if (likeCountError) console.error("Like Count Error:", likeCountError);
   if (clientLikesError) console.error("Client Likes Error:", clientLikesError);
+  if (replyCountError) console.error("Reply Count Error:", replyCountError);
+
+  const commentCountMap = new Map<string, number>();
+  replyCounts?.forEach((row: any) => {
+    commentCountMap.set(row.tweet_id, Number(row.count) ?? 0);
+  });
 
   const likeMap = new Map<string, number>();
   likeCounts?.forEach((row: any) => {
@@ -77,6 +85,7 @@ export default async function ProfileFeedTimeline({
             tweetsAuthorsParents={tweetsAuthorsParents}
             clientLikes={clientLikes}
             likeMap={likeMap}
+            commentCountMap={commentCountMap}
           />
         ))}
     </div>

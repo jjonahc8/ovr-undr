@@ -3,7 +3,8 @@ import TweetCard from "./client-components/tweet-card";
 const MainComponent = async function (
   tweetsAuthorsParents: any[] | null,
   clientLikes: any[] | null,
-  likeMap: Map<string, number>
+  likeMap: Map<string, number>,
+  commentCountMap: Map<string, number>
 ) {
   const timelineLength = tweetsAuthorsParents?.length;
 
@@ -43,6 +44,7 @@ const MainComponent = async function (
               tweetsAuthorsParents={tweetsAuthorsParents}
               clientLikes={clientLikes}
               likeMap={likeMap}
+              commentCountMap={commentCountMap}
             />
           ))}
       </div>

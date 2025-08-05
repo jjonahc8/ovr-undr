@@ -32,7 +32,6 @@ export default async function FocusedTweet({
     file_link: tAP.file_link,
   };
 
-  // parent
   const parent_id = tAP.parent_tweet_id;
   let parent = null;
   if (parent_id) {
@@ -46,10 +45,10 @@ export default async function FocusedTweet({
     };
   }
 
-  // FETCH LIKES & LIKE COUNTS IN PARALLEL
   const [
     { data: likeCounts, error: likeCountError },
     { data: clientLikes, error: clientLikesError },
+    { data: replyCounts, error: replyCountError },
   ] = await Promise.all([
     supabase.rpc("get_like_counts", { tweet_ids: [tAP.id] }),
     supabase
@@ -57,10 +56,17 @@ export default async function FocusedTweet({
       .select("tweet_id")
       .eq("user_id", authProfile.id)
       .in("tweet_id", [tAP.id]),
+    supabase.rpc("get_reply_counts", { tweet_ids: [tAP.id] }),
   ]);
 
   if (likeCountError) console.error("Like Count Error:", likeCountError);
   if (clientLikesError) console.error("Client Likes Error:", clientLikesError);
+  if (replyCountError) console.error("Reply Count Error:", replyCountError);
+
+  const commentCountMap = new Map<string, number>();
+  replyCounts?.forEach((row: any) => {
+    commentCountMap.set(row.tweet_id, Number(row.count) ?? 0);
+  });
 
   const likeMap = new Map<string, number>();
   likeCounts?.forEach((row: any) => {
@@ -74,6 +80,7 @@ export default async function FocusedTweet({
         tweetsAuthorsParents={tweetsAuthorsParents}
         clientLikes={clientLikes}
         likeMap={likeMap}
+        commentCountMap={commentCountMap}
       />
     </div>
   );
