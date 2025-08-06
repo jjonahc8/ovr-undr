@@ -148,7 +148,7 @@ export default function TweetCard({
               </div>
             </div>
             {!window && (
-              <div className="text-gray-500 h-4 mr-3">
+              <div className="text-gray-500 h-4 mr-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
                     <BsThreeDots />
@@ -188,8 +188,9 @@ export default function TweetCard({
             />
           </div>
         )}
+
         {!window && (
-          <div className="flex flex-wrap items-center justify-between gap-4 mt-2 mr-2">
+          <div className="flex flex-wrap items-center justify-between gap-4 mt-2 w-full">
             <div
               className={`flex flex-row items-center justify-center cursor-pointer group text-gray-500`}
             >
