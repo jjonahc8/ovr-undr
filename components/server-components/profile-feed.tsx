@@ -13,7 +13,7 @@ export default async function ProfileFeedTimeline({
   let { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
     .from("tweets_with_authors_and_parents")
     .select("*")
-    .eq("user_id", profileUser?.[0]?.id)
+    .eq("user_id", profileUser.id)
     .range(0, 100);
 
   if (tweetFetchError) {

@@ -24,7 +24,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Check if like already exists
   const { data: existingLike, error: likeCheckError } = await supabase
     .from("likes")
     .select("*")
@@ -33,7 +32,6 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (likeCheckError && likeCheckError.code !== "PGRST116") {
-    // PGRST116 = no rows found (i.e. not yet liked) — that's okay
     return NextResponse.json(
       { error: likeCheckError.message },
       { status: 500 }
@@ -41,7 +39,6 @@ export async function POST(req: NextRequest) {
   }
 
   if (existingLike) {
-    // Already liked → unlike it
     const { error: unlikeError } = await supabase
       .from("likes")
       .delete()
@@ -54,7 +51,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, liked: false });
   } else {
-    // Not yet liked → like it
     const { error: likeError } = await supabase
       .from("likes")
       .insert({ user_id: user.id, tweet_id: tweetId });
