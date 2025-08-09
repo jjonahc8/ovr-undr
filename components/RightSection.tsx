@@ -2,7 +2,7 @@ import { BsSearch } from "react-icons/bs";
 
 const RightSection = () => {
   return (
-    <section className="w-[30%] flex flex-col items-stretch h-screen px-6 sticky top-0 overflow-scroll">
+    <section className="w-[30%] hidden flex-col items-stretch h-screen px-6 sticky top-0 overflow-scroll">
       <div className="sticky top-0 bg-black">
         <div className="mt-2 mb-1">
           <div className="relative w-full h-full group">
