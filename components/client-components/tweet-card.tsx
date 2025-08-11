@@ -60,6 +60,14 @@ export default function TweetCard({
   }
 
   const toggleLike = async (tweetId: string) => {
+    if (!liked) {
+      setLikeCount((likeCount ?? 0) + 1);
+      setLiked(true);
+    } else {
+      setLikeCount((likeCount ?? 0) - 1);
+      setLiked(false);
+    }
+
     const res = await fetch(`/api/like-tweet?id=${tweetId}`, {
       method: "POST",
     });
@@ -67,13 +75,6 @@ export default function TweetCard({
     const data = await res.json();
     if (!res.ok) {
       console.error("Error toggling like:", data.error);
-    } else {
-      setLiked(data.liked);
-      if (!liked) {
-        setLikeCount((likeCount ?? 0) + 1);
-      } else {
-        setLikeCount((likeCount ?? 0) - 1);
-      }
     }
   };
 
@@ -213,9 +214,11 @@ export default function TweetCard({
               <div className="w-8 h-8 flex items-center justify-center rounded-full transition duration-200 group-hover:bg-white/10">
                 <AiOutlineHeart className="w-5 h-5 transition-colors duration-200 group-hover:text-red-500" />
               </div>
-              <div className="text-sm transition-colors duration-200 group-hover:text-red-500">
-                {likeCount}
-              </div>
+              {likeCount !== 0 && (
+                <div className="text-sm transition-colors duration-200 group-hover:text-red-500">
+                  {likeCount}
+                </div>
+              )}
             </div>
             <div className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition duration-200 cursor-pointer">
               <IoShareOutline />
