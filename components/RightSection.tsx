@@ -13,7 +13,7 @@ export default function RightSection() {
             <input
               id="searchBox"
               type="text"
-              placeholder="Search FreePlay"
+              placeholder="Search OvrUndr"
               className="outline-none peer focus:border-primary focus:border w-full h-full rounded-xl py-4 pl-14
               bg-black border-gray-600 border-[0.5px]"
             />

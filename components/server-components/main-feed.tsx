@@ -7,6 +7,7 @@ export default async function MainFeedTimeline({ userId }: { userId: string }) {
   const { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
     .from("tweets_with_authors_and_parents")
     .select("*")
+    .order("created_at", { ascending: false })
     .range(0, 100);
 
   if (tweetFetchError || !tweetsAuthorsParents) {

@@ -13,11 +13,11 @@ export function LeftSidebar({
 }) {
   return (
     <section className="w-[35%] sticky top-0 flex flex-col items-stretch h-screen">
-      <div className="flex flex-col justify-between h-full">
-        <div className="flex flex-col mt-6 mr-6">
+      <div className="flex flex-col justify-between h-full mt-2 mr-6">
+        <div className="flex flex-col">
           <NavigateWrapper to={"/"}>
             <div className="text-3xl font-bold rounded-xl w-fit p-2">
-              <h1>FreePlay</h1>
+              <h1>Ovr/Undr</h1>
             </div>
           </NavigateWrapper>
           <div className="flex flex-col mt-6 gap-4">
