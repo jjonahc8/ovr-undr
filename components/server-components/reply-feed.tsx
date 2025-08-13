@@ -52,27 +52,24 @@ export default async function ReplyFeedTimeline({
   });
   return (
     <div className="flex flex-col border-gray-600">
-      {(replies ?? [])
-        .slice()
-        .reverse()
-        .map((reply, i) => (
-          <TweetCard
-            key={reply.id}
-            tweet={{
-              id: reply.id,
-              text: reply.text,
-              created_at: reply.created_at,
-              user_id: reply.user_id,
-              parent_id: reply.parent_id,
-              author: reply.author_username,
-              file_link: reply.file_link,
-            }}
-            tweetsAuthorsParents={tweetsAuthorsParents}
-            clientLikes={clientLikes}
-            likeMap={likeMap}
-            commentCountMap={commentCountMap}
-          />
-        ))}
+      {(replies ?? []).reverse().map((reply, i) => (
+        <TweetCard
+          key={reply.id}
+          tweet={{
+            id: reply.id,
+            text: reply.text,
+            created_at: reply.created_at,
+            user_id: reply.user_id,
+            parent_id: reply.parent_id,
+            author: reply.author_username,
+            file_link: reply.file_link,
+          }}
+          tweetsAuthorsParents={tweetsAuthorsParents}
+          clientLikes={clientLikes}
+          likeMap={likeMap}
+          commentCountMap={commentCountMap}
+        />
+      ))}
     </div>
   );
 }

@@ -66,28 +66,25 @@ export default async function ProfileFeedTimeline({
   );
   return (
     <div className="flex flex-col">
-      {(tweetsAuthorsParents ?? [])
-        .slice()
-        .reverse()
-        .map((tAP) => (
-          <TweetCard
-            key={tAP.id}
-            tweet={{
-              id: tAP.id,
-              text: tAP.text,
-              created_at: tAP.created_at,
-              user_id: tAP.user_id,
-              parent_id: tAP.parent_id,
-              author: tAP.author_username,
-              file_link: tAP.file_link,
-            }}
-            parent={tAP.parent_id ? parentMap.get(tAP.parent_id) : null}
-            tweetsAuthorsParents={tweetsAuthorsParents}
-            clientLikes={clientLikes}
-            likeMap={likeMap}
-            commentCountMap={commentCountMap}
-          />
-        ))}
+      {(tweetsAuthorsParents ?? []).reverse().map((tAP) => (
+        <TweetCard
+          key={tAP.id}
+          tweet={{
+            id: tAP.id,
+            text: tAP.text,
+            created_at: tAP.created_at,
+            user_id: tAP.user_id,
+            parent_id: tAP.parent_id,
+            author: tAP.author_username,
+            file_link: tAP.file_link,
+          }}
+          parent={tAP.parent_id ? parentMap.get(tAP.parent_id) : null}
+          tweetsAuthorsParents={tweetsAuthorsParents}
+          clientLikes={clientLikes}
+          likeMap={likeMap}
+          commentCountMap={commentCountMap}
+        />
+      ))}
     </div>
   );
 }

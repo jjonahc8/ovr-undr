@@ -25,7 +25,7 @@ const MainComponent = async function (
   if (timelineLength) {
     return (
       <div className="flex flex-col">
-        {tweetsAuthorsParents.slice().map((tAP) => (
+        {tweetsAuthorsParents.map((tAP) => (
           <TweetCard
             key={tAP.id}
             tweet={{
