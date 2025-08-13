@@ -7,9 +7,13 @@ import NavigateWrapper from "./client-components/navigate";
 export function LeftSidebar({
   avatar_link,
   username,
+  create,
+  league,
 }: {
   avatar_link: string | null;
   username: string | null;
+  create?: boolean;
+  league?: boolean;
 }) {
   return (
     <section className="w-[35%] sticky top-0 flex flex-col items-stretch h-screen">

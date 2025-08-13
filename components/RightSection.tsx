@@ -4,7 +4,11 @@ import { FaCrown } from "react-icons/fa";
 import { IoIosMedal } from "react-icons/io";
 import NavigateWrapper from "./client-components/navigate";
 
-export default function RightSection() {
+export default function RightSection({
+  leaderboard,
+}: {
+  leaderboard?: boolean;
+}) {
   return (
     <section className="w-[30%] flex-col space-y-4 items-stretch h-screen ml-6 sticky top-0 overflow-scroll">
       <div className="sticky top-0 bg-black">
