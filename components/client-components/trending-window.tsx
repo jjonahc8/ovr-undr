@@ -16,7 +16,7 @@ export default function TrendingWindow({
 
   return (
     <div
-      className="flex flex-col rounded-xl border-gray-600 border-[0.5px]"
+      className="flex flex-col rounded-xl border-gray-600 border-[0.5px] cursor-pointer"
       onClick={() => {
         handleRedirect(`protected`);
       }}

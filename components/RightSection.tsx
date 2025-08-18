@@ -94,7 +94,7 @@ export default function RightSection({
                 <div className="text-gray-500 text-xs">From your community</div>
               </div>
             </div>
-            <button className="rounded-full px-6 py-2 bg-white text-neutral-950">
+            <button className="rounded-full px-4 py-2 bg-white text-neutral-950 font-semibold">
               Follow
             </button>
           </div>

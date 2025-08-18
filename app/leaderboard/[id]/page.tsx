@@ -1,5 +1,6 @@
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSection from "@/components/RightSection";
+import BackButton from "@/components/ui/back-button";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -39,7 +40,14 @@ export default async function LeaderboardPage() {
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[80vw] w-full h-full flex relative">
         <LeftSidebar avatar_link={avatar_link} username={username} />
-        <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600"></main>
+        <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
+          <div className="flex flex-row items-center mt-4 mb-2 ml-2">
+            <BackButton />
+            <h1 className="text-xl font-bold px-6 backdrop-blur bg-black/10 sticky top-0">
+              Leaderboards
+            </h1>
+          </div>
+        </main>
         <RightSection trendingTweets={trendingTweets} leaderboard={true} />
       </div>
     </div>

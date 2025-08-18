@@ -46,6 +46,9 @@ export default function TweetCard({
   );
 
   async function handleDelete() {
+    // create a robust check helper function that checks against the database
+    // for if the current tweet is a parent else hard delete
+    // ideally should just change the text to [REDACTED] and remove the image
     const res = await fetch(`/api/delete-tweet?id=${tweet.id}`, {
       method: "DELETE",
     });
@@ -55,7 +58,7 @@ export default function TweetCard({
         router.refresh();
       });
     } else {
-      console.error("Failed to delete tweet");
+      console.error("Failed to delete tweet", res);
     }
   }
 
