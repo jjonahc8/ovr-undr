@@ -32,13 +32,12 @@ export default async function CreatePage() {
   if (trendingTweetsError)
     console.error("Error fetching trending tweets:", trendingTweetsError);
 
-  const apiKey = process.env.SPORTSDATA_API_KEY;
-  const apiKey2 = process.env.SPORTSDATA_API_KEY2;
+  const oddsKey = process.env.ODDS_API_KEY;
 
-  if (!apiKey) return <div>API key not set</div>;
+  if (!oddsKey) return <div>API key not set</div>;
 
   const eventsRes = await fetch(
-    `https://replay.sportsdata.io/api/v3/nfl/odds/json/bettingevents/2023reg?key=${apiKey}`,
+    `https://api.the-odds-api.com/v4/sports/americanfootball_nfl_preseason/events?apiKey=${oddsKey}&dateFormat=iso&commenceTimeFrom=2025-08-20T00%3A00%3A00Z&commenceTimeTo=2025-09-20T00%3A00%3A00Z`,
     { next: { revalidate: 60 } }
   );
 
@@ -51,51 +50,18 @@ export default async function CreatePage() {
 
   let eventsData: any[] = await eventsRes.json();
 
-  const games = eventsData
-    .filter((item) => item.BettingEventType === "Game")
-    .map((item) => {
-      const [away, home] = item.Name.split(" @ ");
-      return {
-        id: item.ScoreID,
-        home,
-        away,
-        date: item.StartDate,
-      };
-    })
-    .filter((item) => item.home === "Pittsburgh Steelers" && item.id === 18541);
+  const focusEventID = "c450d95036ea8ed06024763891d13889";
 
-  const pickRes = await fetch(
-    `http://archive.sportsdata.io/v3/nfl/odds/json/bettingplayerpropsbyscoreid/${games[0].id}/2023-12-07-03-05.json?key=${apiKey2}`,
-    { next: { revalidate: 60 } }
+  eventsData = eventsData.filter((event) => event.id === focusEventID)[0];
+
+  const oddsRes = await fetch(
+    `https://api.the-odds-api.com/v4/sports/americanfootball_nfl_preseason/events/${focusEventID}/odds?apiKey=${oddsKey}&regions=us&dateFormat=iso&oddsFormat=american&includeLinks=true&includeSids=true&includeBetLimits=true`,
+    { next: { revalidate: 600 } }
   );
 
-  if (!pickRes.ok)
-    return (
-      <div>
-        Error: {pickRes.status} {pickRes.statusText}
-      </div>
-    );
+  const oddsHeaders = Object.fromEntries(oddsRes.headers.entries());
 
-  let pickData: any[] = await pickRes.json();
-
-  const playerProps = pickData
-    .map((item) => {
-      const draftKingsPicks = item.BettingOutcomes.filter(
-        (pick: any) => pick.SportsBook.Name === "DraftKings"
-      ).map((prop: any) => ({
-        bet: prop.BettingOutcomeType,
-        value: prop.Value,
-        payout: prop.PayoutAmerican,
-      }));
-
-      return {
-        name: item.PlayerName,
-        type: item.BettingBetType,
-        available: item.AnyBetsAvailable,
-        picks: draftKingsPicks,
-      };
-    })
-    .filter((pick) => pick.picks.length === 2);
+  let oddsData: any[] = await oddsRes.json();
 
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
@@ -113,6 +79,10 @@ export default async function CreatePage() {
               Create a League
             </h1>
           </div>
+          <h1 className="text-xl font-bold underline text-center">
+            Response Headers
+          </h1>
+          <pre>{JSON.stringify(oddsHeaders, null, 2)}</pre>
           <div className="flex flex-col">
             <h1 className="text-center text-2xl font-bold">
               OvrUndr SportsDataIO MVP Use Case
@@ -126,7 +96,7 @@ export default async function CreatePage() {
             <h1 className="text-center font-semibold">
               (1 API call per season)
             </h1>
-            <pre>{JSON.stringify(games, null, 2)}</pre>
+            <pre>{JSON.stringify(eventsData, null, 2)}</pre>
             <h1 className="text-center text-xl font-bold underline">
               Player Props by Score ID Output
             </h1>
@@ -137,7 +107,7 @@ export default async function CreatePage() {
               Each call 12-24 hrs before game time to allow users to make
               selections
             </h1>
-            <pre>{JSON.stringify(playerProps, null, 2)}</pre>
+            <pre>{JSON.stringify(oddsData, null, 2)}</pre>
           </div>
         </main>
         <RightSection />
