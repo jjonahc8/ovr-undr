@@ -21,7 +21,7 @@ export default function ComposeTweetForm({
   const [marginT, setMarginT] = useState("mt-6");
   const [marginL, setMarginL] = useState("ml-5");
   const [paddingX, setPaddingX] = useState("px-4");
-  const [textSize, setTextSize] = useState("text-2xl");
+  const [textSize, setTextSize] = useState("text-xl");
   const [postButtonName, setPostButtonName] = useState("Plot");
 
   const router = useRouter();
