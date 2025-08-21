@@ -22,7 +22,7 @@ export function LeftSidebar({
     <section className="w-[35%] sticky top-0 flex flex-col h-screen">
       <NavigateWrapper to={"/"}>
         <div className="text-3xl font-bold rounded-xl w-fit mt-4 mr-6">
-          <h1>Ovr/Undr</h1>
+          <h1 className="bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent">ovr/undr</h1>
         </div>
       </NavigateWrapper>
 

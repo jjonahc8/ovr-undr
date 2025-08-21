@@ -19,7 +19,7 @@ export default async function Home() {
       <nav className="w-full border-b border-gray-700 bg-black/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="text-2xl font-bold text-white">
-            OvrUndr
+            ovr/undr
           </div>
           <AuthButton />
         </div>
@@ -28,7 +28,7 @@ export default async function Home() {
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent">
-            OvrUndr
+            ovr/undr
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
@@ -74,7 +74,7 @@ export default async function Home() {
 
       <footer className="border-t border-gray-700 py-8 px-6">
         <div className="max-w-6xl mx-auto text-center text-gray-400">
-          <p>&copy; 2025 OvrUndr. Built for sports betting enthusiasts.</p>
+          <p>&copy; 2025 ovr/undr. Built for sports betting enthusiasts.</p>
         </div>
       </footer>
     </main>
