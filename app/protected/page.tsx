@@ -38,16 +38,20 @@ export default async function ProtectedPage() {
           <div className="backdrop-blur-xl backdrop-brightness-50 sticky top-0">
             <h1 className="text-xl font-bold ml-6 mt-5 mb-4">Home</h1>
           </div>
-          <div className="border-t-[0.5px] border-b-[0.5px] px-4 flex items-stretch py-4 border-gray-600 relative">
-            <div className="w-11 h-11 rounded-full flex-none mt-3">
-              {!avatar_link && (
-                <div className="w-11 h-11 bg-slate-400 rounded-full" />
-              )}
-              {avatar_link && (
-                <img className="w-11 h-11 rounded-full" src={avatar_link} />
-              )}
+          <div className="border-t-[0.5px] border-b-[0.5px] border-gray-600">
+            <div className="px-4 py-4 flex items-start gap-3">
+              <div className="w-12 h-12 rounded-full flex-none">
+                {!avatar_link && (
+                  <div className="w-12 h-12 bg-slate-400 rounded-full" />
+                )}
+                {avatar_link && (
+                  <img className="w-12 h-12 rounded-full object-cover" src={avatar_link} />
+                )}
+              </div>
+              <div className="flex-1">
+                <ComposeTweet />
+              </div>
             </div>
-            <ComposeTweet />
           </div>
           <Suspense
             fallback={

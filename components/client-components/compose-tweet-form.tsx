@@ -30,7 +30,7 @@ export default function ComposeTweetForm({
   useEffect(() => {
     if (pathname.slice(0, 5) === "/post") {
       setPlaceholder("What do you think?");
-      setPaddingY("pt-1");
+      setPaddingY("pt-0");
       setBorderT("");
       setMarginT("mt-2");
       setMarginL("ml-2");
@@ -66,63 +66,67 @@ export default function ComposeTweetForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col w-full h-full">
+    <form onSubmit={handleSubmit} className="flex flex-col w-full">
       <TextareaAutosize
         name="tweet"
         value={tweet}
         onChange={(e) => setTweet(e.target.value)}
         placeholder={placeholder}
-        className={`w-full h-full ${textSize} placeholder:text-gray-600 bg-transparent outline-none ${paddingX} ${paddingY}`}
+        className={`w-full resize-none ${textSize} placeholder:text-gray-500 bg-transparent outline-none border-none ${paddingY === "pt-0" ? "pt-1" : "pt-3"} pb-2 px-0 leading-relaxed`}
         maxLength={280}
       />
       {imagePreviewUrl && (
-        <div className="relative w-full max-w-md mr-auto">
+        <div className="relative w-full max-w-md mb-3">
           <button
             type="button"
             onClick={() => {
               setImage(null);
               setImagePreviewUrl(null);
             }}
-            className="absolute top-6 right-2 bg-black bg-opacity-70 rounded-full h-8 w-8 text-white text-2xl hover:bg-opacity-60"
+            className="absolute top-2 right-2 bg-black bg-opacity-75 rounded-full h-8 w-8 text-white text-lg hover:bg-opacity-90 flex items-center justify-center"
           >
-            &times;
+            ×
           </button>
           <img
             src={imagePreviewUrl}
             alt="Preview"
-            className="rounded-xl w-full mt-4"
+            className="rounded-2xl w-full border border-gray-700"
           />
         </div>
       )}
-      <div
-        className={`flex justify-between items-center w-full ${borderT} ${marginT}`}
-      >
-        <label
-          htmlFor="fileUpload"
-          className={`cursor-pointer text-white mt-4 ${marginL}`}
-        >
-          <GoFileMedia />
-        </label>
-        <input
-          type="file"
-          id="fileUpload"
-          className="hidden"
-          onChange={handleImage}
-        />
-        <div className="w-full max-w-[100px] mt-4">
-          <button
-            type="submit"
-            disabled={tweet.trim() === ""}
-            className={`rounded-full py-2 w-full text-xl text-center transition duration-200 font-semibold
-              ${
-                tweet.trim() === ""
-                  ? "bg-gray-400 text-gray-700"
-                  : "bg-white text-black hover:bg-white/70"
-              }`}
+      
+      <div className="flex justify-between items-center pt-3 -ml-2">
+        <div className="flex items-center gap-4">
+          <label
+            htmlFor="fileUpload"
+            className="cursor-pointer text-blue-400 hover:text-blue-300 transition-colors p-2 hover:bg-blue-400/10 rounded-full"
           >
-            {postButtonName}
-          </button>
+            <GoFileMedia size={20} />
+          </label>
+          <input
+            type="file"
+            id="fileUpload"
+            className="hidden"
+            accept="image/*"
+            onChange={handleImage}
+          />
+          
+          <div className="text-sm text-gray-500">
+            {280 - tweet.length} characters remaining
+          </div>
         </div>
+        
+        <button
+          type="submit"
+          disabled={tweet.trim() === ""}
+          className={`rounded-full px-6 py-2 text-sm font-bold transition duration-200 min-w-[80px] ${
+            tweet.trim() === ""
+              ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+              : "bg-white text-black hover:bg-gray-200"
+          }`}
+        >
+          {postButtonName}
+        </button>
       </div>
     </form>
   );

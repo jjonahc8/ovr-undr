@@ -5,6 +5,7 @@ import RightSection from "@/components/RightSection";
 import BackButton from "@/components/ui/back-button";
 import ComposeTweet from "@/components/server-components/compose-tweet";
 import ReplyFeedTimeline from "@/components/server-components/reply-feed";
+import TopUsers from "@/components/server-components/top-users";
 import { Suspense } from "react";
 import FocusedTweet from "@/components/server-components/focused-tweet";
 
@@ -58,18 +59,18 @@ export default async function PostPage(props: {
           >
             <FocusedTweet params={params} authProfile={authProfile} />
           </Suspense>
-          <div
-            className={`px-4 pt-2 pb-4 border-b-[0.5px] border-gray-600 flex items-stretch relative`}
-          >
+          <div className="px-4 py-4 flex items-start gap-3 border-b-[0.5px] border-gray-600">
             <div className="w-10 h-10 rounded-full flex-none">
               {!avatar_link && (
                 <div className="w-10 h-10 bg-slate-400 rounded-full" />
               )}
               {avatar_link && (
-                <img className="w-10 h-10 rounded-full" src={avatar_link} />
+                <img className="w-10 h-10 rounded-full object-cover" src={avatar_link} />
               )}
             </div>
-            <ComposeTweet />
+            <div className="flex-1">
+              <ComposeTweet />
+            </div>
           </div>
           <Suspense
             fallback={
@@ -81,7 +82,18 @@ export default async function PostPage(props: {
             <ReplyFeedTimeline params={params} authProfile={authProfile} />
           </Suspense>
         </main>
-        <RightSection />
+        <RightSection 
+          topUsersComponent={
+            <Suspense fallback={
+              <div className="rounded-xl border-gray-600 border-[0.5px]">
+                <h3 className="text-left font-bold text-xl pt-4 pb-2 px-4">You might know</h3>
+                <div className="p-4 text-center text-gray-500">Loading...</div>
+              </div>
+            }>
+              <TopUsers currentUserId={authUserData.claims.sub} />
+            </Suspense>
+          }
+        />
       </div>
     </div>
   );
