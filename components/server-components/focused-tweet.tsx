@@ -81,6 +81,7 @@ export default async function FocusedTweet({
         clientLikes={clientLikes}
         likeMap={likeMap}
         commentCountMap={commentCountMap}
+        currentUserId={authProfile.id}
       />
     </div>
   );

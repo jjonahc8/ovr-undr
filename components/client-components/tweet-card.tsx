@@ -23,6 +23,7 @@ export default function TweetCard({
   clientLikes,
   likeMap,
   commentCountMap,
+  currentUserId,
 }: {
   tweet: any;
   parent?: any;
@@ -31,6 +32,7 @@ export default function TweetCard({
   clientLikes?: any[] | null;
   likeMap?: Map<string, number>;
   commentCountMap?: Map<string, number>;
+  currentUserId?: string;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -46,9 +48,10 @@ export default function TweetCard({
   );
 
   async function handleDelete() {
-    // create a robust check helper function that checks against the database
-    // for if the current tweet is a parent else hard delete
-    // ideally should just change the text to [REDACTED] and remove the image
+    if (!confirm("Are you sure you want to delete this tweet? This action cannot be undone.")) {
+      return;
+    }
+
     const res = await fetch(`/api/delete-tweet?id=${tweet.id}`, {
       method: "DELETE",
     });
@@ -58,7 +61,9 @@ export default function TweetCard({
         router.refresh();
       });
     } else {
-      console.error("Failed to delete tweet", res);
+      const error = await res.json();
+      console.error("Failed to delete tweet:", error);
+      alert(error.error || "Failed to delete tweet");
     }
   }
 
@@ -151,7 +156,7 @@ export default function TweetCard({
                 {generateDate(tweet.created_at)}
               </div>
             </div>
-            {!window && (
+            {!window && currentUserId === tweet.user_id && (
               <div className="text-gray-500 h-4 mr-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
@@ -255,20 +260,22 @@ export default function TweetCard({
               </NavigateWrapper>
             </div>
           </div>
-          <div className="text-gray-500 h-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <BsThreeDots />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={handleDelete}>
-                  <button disabled={isPending} className="text-red-500">
-                    Delete Tweet
-                  </button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {currentUserId === tweet.user_id && (
+            <div className="text-gray-500 h-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <BsThreeDots />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={handleDelete}>
+                    <button disabled={isPending} className="text-red-500">
+                      Delete Tweet
+                    </button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
         </div>
         <div className="text-white text-lg">{tweet.text}</div>
         {parent && (

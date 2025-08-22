@@ -4,7 +4,8 @@ const MainComponent = async function (
   tweetsAuthorsParents: any[] | null,
   clientLikes: any[] | null,
   likeMap: Map<string, number>,
-  commentCountMap: Map<string, number>
+  commentCountMap: Map<string, number>,
+  currentUserId?: string
 ) {
   const timelineLength = tweetsAuthorsParents?.length;
 
@@ -42,6 +43,7 @@ const MainComponent = async function (
             clientLikes={clientLikes}
             likeMap={likeMap}
             commentCountMap={commentCountMap}
+            currentUserId={currentUserId}
           />
         ))}
       </div>
