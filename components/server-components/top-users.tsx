@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import TopUsersClient from "../client-components/top-users-client";
 
 export default async function TopUsers({ currentUserId }: { currentUserId: string }) {
   const supabase = await createClient();
@@ -30,50 +31,22 @@ export default async function TopUsers({ currentUserId }: { currentUserId: strin
       );
     }
 
-    return (
-      <div className="rounded-xl border-gray-600 border-[0.5px]">
-        <h3 className="text-left font-bold text-xl pt-4 pb-2 px-4">
-          You might know
-        </h3>
-        {topUsers.map((user) => (
-          <div
-            key={user.id}
-            className="hover:bg-white/10 p-4 flex justify-between items-center last:rounded-b-xl transition duration-200"
-          >
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-full flex-none">
-                {user.pfp_link ? (
-                  <img 
-                    src={user.pfp_link} 
-                    alt={user.username || 'User'} 
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-10 h-10 bg-neutral-600 rounded-full"></div>
-                )}
-              </div>
-              <div className="flex flex-col">
-                <div className="font-bold text-sm text-white">
-                  {user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.username}
-                </div>
-                <div className="text-gray-500 text-xs">
-                  @{user.username}
-                </div>
-              </div>
-            </div>
-            <form action="/api/actions/follow-user" method="POST">
-              <input type="hidden" name="followingId" value={user.id} />
-              <button 
-                type="submit"
-                className="rounded-full px-4 py-2 bg-white text-neutral-950 font-semibold hover:bg-gray-200 transition duration-200"
-              >
-                Follow
-              </button>
-            </form>
-          </div>
-        ))}
-      </div>
-    );
+    // Get current follow relationships
+    const { data: followRelationships } = await supabase
+      .from('follows')
+      .select('followee_id')
+      .eq('follower_id', currentUserId)
+      .in('followee_id', topUsers.map(u => u.id));
+
+    const followingIds = new Set(followRelationships?.map(f => f.followee_id) || []);
+
+    // Add isFollowing property to each user
+    const usersWithFollowStatus = topUsers.map(user => ({
+      ...user,
+      isFollowing: followingIds.has(user.id)
+    }));
+
+    return <TopUsersClient users={usersWithFollowStatus} currentUserId={currentUserId} />;
   } catch (err) {
     console.error('Exception in TopUsers:', err);
     return null;
