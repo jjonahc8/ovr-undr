@@ -49,6 +49,7 @@ export default async function MainFeedTimeline({ userId }: { userId: string }) {
     tweetsAuthorsParents,
     clientLikes ?? [],
     likeMap,
-    commentCountMap
+    commentCountMap,
+    userId
   );
 }

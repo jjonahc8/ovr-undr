@@ -68,6 +68,7 @@ export default async function ReplyFeedTimeline({
           clientLikes={clientLikes}
           likeMap={likeMap}
           commentCountMap={commentCountMap}
+          currentUserId={authProfile.id}
         />
       ))}
     </div>
