@@ -39,7 +39,7 @@ export default async function FocusedTweet({
       id: tAP.parent_tweet_id,
       text: tAP.parent_text,
       created_at: tAP.created_at,
-      user_id: tAP.user_id,
+      user_id: tAP.parent_user_id,
       author: tAP.parent_author_username,
       file_link: tAP.parent_file_link,
     };

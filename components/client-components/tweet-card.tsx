@@ -48,7 +48,11 @@ export default function TweetCard({
   );
 
   async function handleDelete() {
-    if (!confirm("Are you sure you want to delete this tweet? This action cannot be undone.")) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this tweet? This action cannot be undone."
+      )
+    ) {
       return;
     }
 
@@ -107,9 +111,15 @@ export default function TweetCard({
     !window && !(pathname.slice(0, 5) === "/post") ? "space-x-4" : "space-x-2";
   const hover = !window ? "hover:bg-gray-950" : "";
 
-  const avatarMap = new Map(
-    tweetsAuthorsParents?.map((tAP) => [tAP.user_id, tAP.author_pfp_link])
-  );
+  const avatarMap = new Map();
+
+  tweetsAuthorsParents?.forEach((tAP) => {
+    avatarMap.set(tAP.user_id, tAP.author_pfp_link);
+
+    if (tAP.parent_user_id && tAP.parent_author_pfp_link) {
+      avatarMap.set(tAP.parent_user_id, tAP.parent_author_pfp_link);
+    }
+  });
 
   useEffect(() => {
     if (isFocusedTweet) {
@@ -120,6 +130,8 @@ export default function TweetCard({
     }
   }, [pathname, isFocusedTweet]);
 
+  console.log(tweet, avatarMap);
+
   return !focused ? (
     <div
       className={`${topBorder} p-2 flex ${spaceX} ${hover}`}
@@ -128,7 +140,7 @@ export default function TweetCard({
       }}
     >
       <div className={`${avatarSize} ml-2 mt-2`}>
-        <NavigateWrapper to={tweet.author} stopPropagation={true}>
+        <NavigateWrapper to={`/${tweet.author}`} stopPropagation={true}>
           {!avatarMap.get(tweet.user_id) && (
             <div className={`${avatarSize} bg-slate-200 rounded-full`} />
           )}
@@ -145,7 +157,7 @@ export default function TweetCard({
           <div className="flex items-center justify-between w-full mt-1">
             <div className="flex flex-row items-center">
               <div className="font-bold hover:underline cursor-pointer">
-                <NavigateWrapper to={tweet.author} stopPropagation={true}>
+                <NavigateWrapper to={`/${tweet.author}`} stopPropagation={true}>
                   {tweet.author}
                 </NavigateWrapper>
               </div>
@@ -253,7 +265,6 @@ export default function TweetCard({
                 )}
               </NavigateWrapper>
             </div>
-
             <div className="font-bold hover:underline cursor-pointer text-lg">
               <NavigateWrapper to={`/${tweet.author}`} stopPropagation={true}>
                 {tweet.author}
