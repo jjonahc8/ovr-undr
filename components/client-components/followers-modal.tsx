@@ -26,7 +26,9 @@ export default function FollowersModal({
   username,
   tab: initialTab,
 }: FollowersModalProps) {
-  const [activeTab, setActiveTab] = useState<"followers" | "following">(initialTab);
+  const [activeTab, setActiveTab] = useState<"followers" | "following">(
+    initialTab
+  );
   const [followers, setFollowers] = useState<User[]>([]);
   const [following, setFollowing] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
@@ -59,8 +61,8 @@ export default function FollowersModal({
         }
 
         if (followData && followData.length > 0) {
-          const followerIds = followData.map(f => f.follower_id);
-          
+          const followerIds = followData.map((f) => f.follower_id);
+
           // Get user profiles
           const { data: profileData, error: profileError } = await supabase
             .from("profiles")
@@ -77,7 +79,7 @@ export default function FollowersModal({
           setFollowers([]);
         }
       } else {
-        // Get following IDs first  
+        // Get following IDs first
         const { data: followData, error: followError } = await supabase
           .from("follows")
           .select("followee_id")
@@ -89,8 +91,8 @@ export default function FollowersModal({
         }
 
         if (followData && followData.length > 0) {
-          const followingIds = followData.map(f => f.followee_id);
-          
+          const followingIds = followData.map((f) => f.followee_id);
+
           // Get user profiles
           const { data: profileData, error: profileError } = await supabase
             .from("profiles")
@@ -200,27 +202,29 @@ export default function FollowersModal({
                   className="flex items-center justify-between hover:bg-gray-800 p-2 rounded-lg transition-colors"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full flex-none">
+                    <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex-none">
                       {user.pfp_link ? (
                         <img
                           src={user.pfp_link}
                           alt={user.username}
-                          className="w-10 h-10 rounded-full object-cover"
+                          className="w-10 h-10 min-w-10 min-h-10 rounded-full"
                         />
                       ) : (
-                        <div className="w-10 h-10 bg-gray-600 rounded-full" />
+                        <div className="w-10 h-10 min-w-10 min-h-10 bg-gray-600 rounded-full" />
                       )}
                     </div>
                     <div className="flex flex-col">
                       <div className="font-bold text-white text-sm">
-                        {user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.username}
+                        {user.first_name && user.last_name
+                          ? `${user.first_name} ${user.last_name}`
+                          : user.username}
                       </div>
                       <div className="text-gray-400 text-xs">
                         @{user.username}
                       </div>
                     </div>
                   </div>
-                  
+
                   <button
                     onClick={() => handleFollow(user.id)}
                     className="rounded-full px-4 py-1 bg-white text-black font-semibold text-sm hover:bg-gray-200 transition-colors"
