@@ -72,7 +72,9 @@ export default function ComposeTweetForm({
         value={tweet}
         onChange={(e) => setTweet(e.target.value)}
         placeholder={placeholder}
-        className={`w-full resize-none ${textSize} placeholder:text-gray-500 bg-transparent outline-none border-none ${paddingY === "pt-0" ? "pt-1" : "pt-3"} pb-2 px-0 leading-relaxed`}
+        className={`w-full resize-none ${textSize} placeholder:text-gray-500 bg-transparent outline-none border-none ${
+          paddingY === "pt-0" ? "pt-1" : "pt-3"
+        } pb-2 px-0 leading-relaxed`}
         maxLength={280}
       />
       {imagePreviewUrl && (
@@ -94,7 +96,7 @@ export default function ComposeTweetForm({
           />
         </div>
       )}
-      
+
       <div className="flex justify-between items-center pt-3 -ml-2">
         <div className="flex items-center gap-4">
           <label
@@ -110,12 +112,12 @@ export default function ComposeTweetForm({
             accept="image/*"
             onChange={handleImage}
           />
-          
+
           <div className="text-sm text-gray-500">
             {280 - tweet.length} characters remaining
           </div>
         </div>
-        
+
         <button
           type="submit"
           disabled={tweet.trim() === ""}
