@@ -8,9 +8,11 @@ import TrendingWindow from "./client-components/trending-window";
 export default function RightSection({
   leaderboard,
   trendingTweets,
+  topUsersComponent,
 }: {
   leaderboard?: boolean;
   trendingTweets?: any[] | null;
+  topUsersComponent?: React.ReactNode;
 }) {
   return (
     <section className="w-[30%] flex-col space-y-4 items-stretch h-screen ml-6 sticky top-0 overflow-scroll">
@@ -78,28 +80,16 @@ export default function RightSection({
           </NavigateWrapper>
         )}
       </div>
-      <div className="rounded-xl border-gray-600 border-[0.5px]">
-        <h3 className="text-left font-bold text-xl pt-4 pb-2 px-4">
-          You might know
-        </h3>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div
-            key={i}
-            className="hover:bg-white/10 p-4 flex justify-between items-center last:rounded-b-xl transition duration-200"
-          >
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-neutral-600 rounded-full flex-none"></div>
-              <div className="flex flex-col">
-                <div className="font-bold text-sm text-white">jon4h</div>
-                <div className="text-gray-500 text-xs">From your community</div>
-              </div>
-            </div>
-            <button className="rounded-full px-4 py-2 bg-white text-neutral-950 font-semibold">
-              Follow
-            </button>
+      {topUsersComponent || (
+        <div className="rounded-xl border-gray-600 border-[0.5px]">
+          <h3 className="text-left font-bold text-xl pt-4 pb-2 px-4">
+            You might know
+          </h3>
+          <div className="p-4 text-center text-gray-500">
+            Sign in to see suggestions
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

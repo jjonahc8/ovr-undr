@@ -4,6 +4,7 @@ import LeftSidebar from "@/components/LeftSidebar";
 import RightSection from "@/components/RightSection";
 import ComposeTweet from "@/components/server-components/compose-tweet";
 import MainFeedTimeline from "@/components/server-components/main-feed";
+import TopUsers from "@/components/server-components/top-users";
 import { Suspense } from "react";
 
 export default async function ProtectedPage() {
@@ -58,7 +59,18 @@ export default async function ProtectedPage() {
             <MainFeedTimeline userId={userId} />
           </Suspense>
         </main>
-        <RightSection />
+        <RightSection 
+          topUsersComponent={
+            <Suspense fallback={
+              <div className="rounded-xl border-gray-600 border-[0.5px]">
+                <h3 className="text-left font-bold text-xl pt-4 pb-2 px-4">You might know</h3>
+                <div className="p-4 text-center text-gray-500">Loading...</div>
+              </div>
+            }>
+              <TopUsers currentUserId={userId} />
+            </Suspense>
+          }
+        />
       </div>
     </div>
   );

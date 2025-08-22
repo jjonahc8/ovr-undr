@@ -6,6 +6,7 @@ import generateDate from "../utilities/generateDate";
 import EditProfileTrigger from "./edit-profile-trigger";
 import { followUser } from "@/app/api/actions/followUser";
 import { Button } from "../ui/button";
+import FollowersModal from "./followers-modal";
 
 export default function ProfileCard({
   submitProfileChanges,
@@ -25,6 +26,8 @@ export default function ProfileCard({
   const [following, setFollowing] = useState(isFollowing);
   const [isPending, startTransition] = useTransition();
   const [followersCount, setFollowersCount] = useState(initialFollowersCount);
+  const [showFollowersModal, setShowFollowersModal] = useState(false);
+  const [modalTab, setModalTab] = useState<"followers" | "following">("followers");
 
   const handleClick = () => {
     startTransition(async () => {
@@ -37,6 +40,16 @@ export default function ProfileCard({
         setFollowersCount((count) => count - 1);
       }
     });
+  };
+
+  const openFollowersModal = () => {
+    setModalTab("followers");
+    setShowFollowersModal(true);
+  };
+
+  const openFollowingModal = () => {
+    setModalTab("following");
+    setShowFollowersModal(true);
   };
 
   return (
@@ -97,13 +110,31 @@ export default function ProfileCard({
         <p>Joined {generateDate(profileUser.created_at)}</p>
       </div>
       <div className="flex flex-row items-center py-2 px-4 border-b-[0.5px] border-gray-600">
-        <h1 className="font-bold mr-2 text-2xl">{followersCount}</h1>
-        <p className="mr-4 text-gray-400">
-          {initialFollowersCount === 1 ? "Follower" : "Followers"}
-        </p>
-        <h1 className="font-bold mr-2 text-2xl">{followingCount}</h1>
-        <p className="text-gray-400">Following</p>
+        <button 
+          onClick={openFollowersModal}
+          className="flex items-center mr-4 hover:underline transition-all duration-200"
+        >
+          <h1 className="font-bold mr-2 text-2xl">{followersCount}</h1>
+          <p className="text-gray-400">
+            {followersCount === 1 ? "Follower" : "Followers"}
+          </p>
+        </button>
+        <button 
+          onClick={openFollowingModal}
+          className="flex items-center hover:underline transition-all duration-200"
+        >
+          <h1 className="font-bold mr-2 text-2xl">{followingCount}</h1>
+          <p className="text-gray-400">Following</p>
+        </button>
       </div>
+      
+      <FollowersModal
+        isOpen={showFollowersModal}
+        onClose={() => setShowFollowersModal(false)}
+        userId={profileUser.id}
+        username={profileUser.username}
+        tab={modalTab}
+      />
     </>
   );
 }
