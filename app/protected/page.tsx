@@ -5,6 +5,7 @@ import RightSection from "@/components/RightSection";
 import ComposeTweet from "@/components/server-components/compose-tweet";
 import MainFeedTimeline from "@/components/server-components/main-feed";
 import TopUsers from "@/components/server-components/top-users";
+import ScrollableHeader from "@/components/client-components/scrollable-header";
 import { Suspense } from "react";
 
 export default async function ProtectedPage() {
@@ -35,9 +36,7 @@ export default async function ProtectedPage() {
       <div className="max-w-[80vw] w-full h-full flex relative">
         <LeftSidebar avatar_link={avatar_link} username={username} />
         <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
-          <div className="backdrop-blur-xl backdrop-brightness-50 sticky top-0">
-            <h1 className="text-xl font-bold ml-6 mt-5 mb-4">Home</h1>
-          </div>
+          <ScrollableHeader />
           <div className="border-t-[0.5px] border-b-[0.5px] border-gray-600">
             <div className="px-4 py-4 flex items-start gap-3">
               <div className="w-12 h-12 min-w-12 min-h-12 rounded-full flex-none">
