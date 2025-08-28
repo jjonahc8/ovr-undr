@@ -39,15 +39,12 @@ export default async function ProtectedPage() {
           <ScrollableHeader />
           <div className="border-t-[0.5px] border-b-[0.5px] border-gray-600">
             <div className="px-4 py-4 flex items-start gap-3">
-              <div className="w-12 h-12 min-w-12 min-h-12 rounded-full flex-none">
+              <div className="w-12 h-12 rounded-full flex-none">
                 {!avatar_link && (
-                  <div className="w-12 h-12 min-w-12 min-h-12 bg-slate-400 rounded-full" />
+                  <div className="w-12 h-12 bg-slate-400 rounded-full" />
                 )}
                 {avatar_link && (
-                  <img
-                    className="w-12 h-12 min-w-12 min-h-12 rounded-full object-cover"
-                    src={avatar_link}
-                  />
+                  <img className="w-12 h-12 rounded-full" src={avatar_link} />
                 )}
               </div>
               <div className="flex-1">

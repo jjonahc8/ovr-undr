@@ -18,7 +18,10 @@ interface TopUsersClientProps {
   currentUserId: string;
 }
 
-export default function TopUsersClient({ users, currentUserId }: TopUsersClientProps) {
+export default function TopUsersClient({
+  users,
+  currentUserId,
+}: TopUsersClientProps) {
   const [followStates, setFollowStates] = useState<Record<string, boolean>>(
     users.reduce((acc, user) => ({ ...acc, [user.id]: user.isFollowing }), {})
   );
@@ -30,11 +33,11 @@ export default function TopUsersClient({ users, currentUserId }: TopUsersClientP
     startTransition(async () => {
       try {
         const result = await followUser(currentUserId, userId);
-        
+
         if (result === "followed") {
-          setFollowStates(prev => ({ ...prev, [userId]: true }));
+          setFollowStates((prev) => ({ ...prev, [userId]: true }));
         } else if (result === "unfollowed") {
-          setFollowStates(prev => ({ ...prev, [userId]: false }));
+          setFollowStates((prev) => ({ ...prev, [userId]: false }));
         }
       } catch (error) {
         console.error("Error following/unfollowing user:", error);
@@ -54,12 +57,15 @@ export default function TopUsersClient({ users, currentUserId }: TopUsersClientP
           key={user.id}
           className="hover:bg-white/10 p-4 flex justify-between items-center last:rounded-b-xl transition duration-200"
         >
-          <Link href={`/${user.username}`} className="flex items-center space-x-2 flex-1 group">
+          <Link
+            href={`/${user.username}`}
+            className="flex items-center space-x-2 flex-1 group"
+          >
             <div className="w-10 h-10 rounded-full flex-none">
               {user.pfp_link ? (
-                <img 
-                  src={user.pfp_link} 
-                  alt={user.username || 'User'} 
+                <img
+                  src={user.pfp_link}
+                  alt={user.username || "User"}
                   className="w-10 h-10 rounded-full object-cover"
                 />
               ) : (
@@ -68,14 +74,14 @@ export default function TopUsersClient({ users, currentUserId }: TopUsersClientP
             </div>
             <div className="flex flex-col">
               <div className="font-bold text-sm text-white group-hover:underline">
-                {user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.username}
+                {user.first_name && user.last_name
+                  ? `${user.first_name} ${user.last_name}`
+                  : user.username}
               </div>
-              <div className="text-gray-500 text-xs">
-                @{user.username}
-              </div>
+              <div className="text-gray-500 text-xs">@{user.username}</div>
             </div>
           </Link>
-          
+
           <button
             onClick={() => handleFollow(user.id)}
             disabled={isPending && loadingUser === user.id}
@@ -86,11 +92,10 @@ export default function TopUsersClient({ users, currentUserId }: TopUsersClientP
             }`}
           >
             {isPending && loadingUser === user.id
-              ? "..." 
-              : followStates[user.id] 
-                ? "Following" 
-                : "Follow"
-            }
+              ? "..."
+              : followStates[user.id]
+              ? "Following"
+              : "Follow"}
           </button>
         </div>
       ))}

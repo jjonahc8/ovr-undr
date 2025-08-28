@@ -32,37 +32,6 @@ export default async function CreatePage() {
   if (trendingTweetsError)
     console.error("Error fetching trending tweets:", trendingTweetsError);
 
-  const oddsKey = process.env.ODDS_API_KEY;
-
-  if (!oddsKey) return <div>API key not set</div>;
-
-  const eventsRes = await fetch(
-    `https://api.the-odds-api.com/v4/sports/americanfootball_nfl_preseason/events?apiKey=${oddsKey}&dateFormat=iso&commenceTimeFrom=2025-08-20T00%3A00%3A00Z&commenceTimeTo=2025-09-20T00%3A00%3A00Z`,
-    { next: { revalidate: 60 } }
-  );
-
-  if (!eventsRes.ok)
-    return (
-      <div>
-        Error: {eventsRes.status} {eventsRes.statusText}
-      </div>
-    );
-
-  let eventsData: any[] = await eventsRes.json();
-
-  const focusEventID = "c450d95036ea8ed06024763891d13889";
-
-  eventsData = eventsData.filter((event) => event.id === focusEventID)[0];
-
-  const oddsRes = await fetch(
-    `https://api.the-odds-api.com/v4/sports/americanfootball_nfl_preseason/events/${focusEventID}/odds?apiKey=${oddsKey}&regions=us&dateFormat=iso&oddsFormat=american&includeLinks=true&includeSids=true&includeBetLimits=true`,
-    { next: { revalidate: 600 } }
-  );
-
-  const oddsHeaders = Object.fromEntries(oddsRes.headers.entries());
-
-  let oddsData: any[] = await oddsRes.json();
-
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[80vw] w-full h-full flex relative">
@@ -78,36 +47,6 @@ export default async function CreatePage() {
             <h1 className="text-xl font-bold px-6 backdrop-blur bg-black/10 sticky top-0">
               Create a League
             </h1>
-          </div>
-          <h1 className="text-xl font-bold underline text-center">
-            Response Headers
-          </h1>
-          <pre>{JSON.stringify(oddsHeaders, null, 2)}</pre>
-          <div className="flex flex-col">
-            <h1 className="text-center text-2xl font-bold">
-              OvrUndr SportsDataIO MVP Use Case
-            </h1>
-            <h1 className="text-center font-semibold mb-4">
-              Resulting via box score or prop plus*
-            </h1>
-            <h1 className="text-center text-xl font-bold underline">
-              Betting Events by Season Output
-            </h1>
-            <h1 className="text-center font-semibold">
-              (1 API call per season)
-            </h1>
-            <pre>{JSON.stringify(eventsData, null, 2)}</pre>
-            <h1 className="text-center text-xl font-bold underline">
-              Player Props by Score ID Output
-            </h1>
-            <h1 className="text-center font-semibold">
-              (Worst case 51 API calls per league per season)
-            </h1>
-            <h1 className="text-center">
-              Each call 12-24 hrs before game time to allow users to make
-              selections
-            </h1>
-            <pre>{JSON.stringify(oddsData, null, 2)}</pre>
           </div>
         </main>
         <RightSection />

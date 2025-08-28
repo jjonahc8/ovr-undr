@@ -130,8 +130,6 @@ export default function TweetCard({
     }
   }, [pathname, isFocusedTweet]);
 
-  console.log(tweet, avatarMap);
-
   return !focused ? (
     <div
       className={`${topBorder} p-2 flex ${spaceX} ${hover}`}
