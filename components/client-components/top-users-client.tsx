@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { followUser } from "@/app/api/actions/followUser";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -47,6 +49,10 @@ export default function TopUsersClient({
     });
   };
 
+  const userPageName = usePathname().slice(1);
+
+  users = users.filter((user) => user.username !== userPageName);
+
   return (
     <div className="rounded-xl border-gray-600 border-[0.5px]">
       <h3 className="text-left font-bold text-xl pt-4 pb-2 px-4">
@@ -85,17 +91,23 @@ export default function TopUsersClient({
           <button
             onClick={() => handleFollow(user.id)}
             disabled={isPending && loadingUser === user.id}
-            className={`rounded-full px-4 py-2 font-semibold transition duration-200 ${
+            className={`rounded-full px-4 py-2 font-semibold flex items-center justify-center transition duration-200 ${
               followStates[user.id]
                 ? "bg-gray-700 text-white border border-gray-600 hover:bg-gray-600"
                 : "bg-white text-black hover:bg-gray-200"
+            } ${
+              isPending && loadingUser === user.id
+                ? "opacity-50 cursor-not-allowed"
+                : ""
             }`}
           >
-            {isPending && loadingUser === user.id
-              ? "..."
-              : followStates[user.id]
-              ? "Following"
-              : "Follow"}
+            {isPending && loadingUser === user.id ? (
+              <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+            ) : followStates[user.id] ? (
+              "Following"
+            ) : (
+              "Follow"
+            )}
           </button>
         </div>
       ))}

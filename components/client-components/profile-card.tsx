@@ -27,7 +27,9 @@ export default function ProfileCard({
   const [isPending, startTransition] = useTransition();
   const [followersCount, setFollowersCount] = useState(initialFollowersCount);
   const [showFollowersModal, setShowFollowersModal] = useState(false);
-  const [modalTab, setModalTab] = useState<"followers" | "following">("followers");
+  const [modalTab, setModalTab] = useState<"followers" | "following">(
+    "followers"
+  );
 
   const handleClick = () => {
     startTransition(async () => {
@@ -91,9 +93,15 @@ export default function ProfileCard({
             onClick={handleClick}
             disabled={isPending}
             className="text-xl text-white font-semibold bg-transparent border-[0.5px] border-white hover:bg-white 
-          hover:text-black transition duration-200 rounded-full"
+          hover:text-black transition duration-200 rounded-full flex items-center justify-center"
           >
-            {isPending ? "..." : following ? "Unfollow" : "Follow"}
+            {isPending ? (
+              <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+            ) : following ? (
+              "Unfollow"
+            ) : (
+              "Follow"
+            )}
           </Button>
         )}
       </div>
@@ -110,7 +118,7 @@ export default function ProfileCard({
         <p>Joined {generateDate(profileUser.created_at)}</p>
       </div>
       <div className="flex flex-row items-center py-2 px-4 border-b-[0.5px] border-gray-600">
-        <button 
+        <button
           onClick={openFollowersModal}
           className="flex items-center mr-4 hover:underline transition-all duration-200"
         >
@@ -119,7 +127,7 @@ export default function ProfileCard({
             {followersCount === 1 ? "Follower" : "Followers"}
           </p>
         </button>
-        <button 
+        <button
           onClick={openFollowingModal}
           className="flex items-center hover:underline transition-all duration-200"
         >
@@ -127,7 +135,7 @@ export default function ProfileCard({
           <p className="text-gray-400">Following</p>
         </button>
       </div>
-      
+
       <FollowersModal
         isOpen={showFollowersModal}
         onClose={() => setShowFollowersModal(false)}

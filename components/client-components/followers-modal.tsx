@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -33,76 +34,85 @@ export default function FollowersModal({
   const [following, setFollowing] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [loadingUser, setLoadingUser] = useState<string | null>(null);
+  const [followingSet, setFollowingSet] = useState<Set<string>>(new Set());
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const supabase = createClient();
+  const router = useRouter();
 
   useEffect(() => {
     if (isOpen) {
+      getCurrentUser();
       fetchData();
     }
   }, [isOpen, activeTab, userId]);
 
+  const getCurrentUser = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      setCurrentUserId(user.id);
+
+      // fetch who the logged-in user is following
+      const { data: followData } = await supabase
+        .from("follows")
+        .select("followee_id")
+        .eq("follower_id", user.id);
+
+      if (followData) {
+        setFollowingSet(new Set(followData.map((f) => f.followee_id)));
+      }
+    }
+  };
+
   const fetchData = async () => {
-    console.log("fetchData called with:", { activeTab, userId });
     setLoading(true);
     setError(null);
 
     try {
       if (activeTab === "followers") {
-        // Get follower IDs first
         const { data: followData, error: followError } = await supabase
           .from("follows")
           .select("follower_id")
           .eq("followee_id", userId);
 
-        if (followError) {
-          console.error("Follow query error:", followError);
-          throw followError;
-        }
+        if (followError) throw followError;
 
-        if (followData && followData.length > 0) {
+        if (followData?.length) {
           const followerIds = followData.map((f) => f.follower_id);
 
-          // Get user profiles
           const { data: profileData, error: profileError } = await supabase
             .from("profiles")
             .select("id, username, first_name, last_name, pfp_link")
             .in("id", followerIds);
 
-          if (profileError) {
-            console.error("Profile query error:", profileError);
-            throw profileError;
-          }
+          if (profileError) throw profileError;
 
           setFollowers(profileData || []);
         } else {
           setFollowers([]);
         }
       } else {
-        // Get following IDs first
         const { data: followData, error: followError } = await supabase
           .from("follows")
           .select("followee_id")
           .eq("follower_id", userId);
 
-        if (followError) {
-          console.error("Follow query error:", followError);
-          throw followError;
-        }
+        if (followError) throw followError;
 
-        if (followData && followData.length > 0) {
+        if (followData?.length) {
           const followingIds = followData.map((f) => f.followee_id);
 
-          // Get user profiles
           const { data: profileData, error: profileError } = await supabase
             .from("profiles")
             .select("id, username, first_name, last_name, pfp_link")
             .in("id", followingIds);
 
-          if (profileError) {
-            console.error("Profile query error:", profileError);
-            throw profileError;
-          }
+          if (profileError) throw profileError;
 
           setFollowing(profileData || []);
         } else {
@@ -117,25 +127,45 @@ export default function FollowersModal({
     }
   };
 
-  const handleFollow = async (targetUserId: string) => {
-    try {
-      const response = await fetch("/api/actions/follow-user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          followingId: targetUserId,
-        }),
-      });
+  const handleFollow = (targetUserId: string) => {
+    if (!currentUserId) return;
 
-      if (response.ok) {
-        // Refresh the data
-        fetchData();
+    setLoadingUser(targetUserId);
+
+    startTransition(async () => {
+      const isFollowing = followingSet.has(targetUserId);
+
+      try {
+        if (isFollowing) {
+          // Unfollow
+          await supabase
+            .from("follows")
+            .delete()
+            .eq("follower_id", currentUserId)
+            .eq("followee_id", targetUserId);
+
+          setFollowingSet((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(targetUserId);
+            return newSet;
+          });
+        } else {
+          // Follow
+          await supabase.from("follows").insert([
+            {
+              follower_id: currentUserId,
+              followee_id: targetUserId,
+            },
+          ]);
+
+          setFollowingSet((prev) => new Set(prev).add(targetUserId));
+        }
+      } catch (err) {
+        console.error("Follow toggle error:", err);
+      } finally {
+        setLoadingUser(null);
       }
-    } catch (err) {
-      console.error("Error following user:", err);
-    }
+    });
   };
 
   if (!isOpen) return null;
@@ -199,7 +229,8 @@ export default function FollowersModal({
               {currentData.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between hover:bg-gray-800 p-2 rounded-lg transition-colors"
+                  onClick={() => router.push(`/${user.username}`)}
+                  className="flex items-center justify-between hover:bg-gray-800 p-2 rounded-lg transition-colors cursor-pointer"
                 >
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex-none">
@@ -225,12 +256,32 @@ export default function FollowersModal({
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => handleFollow(user.id)}
-                    className="rounded-full px-4 py-1 bg-white text-black font-semibold text-sm hover:bg-gray-200 transition-colors"
-                  >
-                    Follow
-                  </button>
+                  {user.id !== currentUserId && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleFollow(user.id);
+                      }}
+                      disabled={isPending && loadingUser === user.id}
+                      className={`rounded-full px-4 py-1 font-semibold text-sm flex items-center justify-center transition-colors ${
+                        followingSet.has(user.id)
+                          ? "bg-black text-white border border-gray-400 hover:bg-gray-800"
+                          : "bg-white text-black hover:bg-gray-200"
+                      } ${
+                        isPending && loadingUser === user.id
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                    >
+                      {isPending && loadingUser === user.id ? (
+                        <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                      ) : followingSet.has(user.id) ? (
+                        "Unfollow"
+                      ) : (
+                        "Follow"
+                      )}
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
