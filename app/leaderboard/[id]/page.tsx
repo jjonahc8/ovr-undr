@@ -44,8 +44,55 @@ export default async function LeaderboardPage() {
           <div className="flex flex-row items-center mt-4 mb-2 ml-2">
             <BackButton />
             <h1 className="text-xl font-bold px-6 backdrop-blur bg-black/10 sticky top-0">
-              Leaderboards
+              Global Leaderboard
             </h1>
+          </div>
+
+          {/* Global leaderboard table */}
+          <div className="p-4">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-gray-600 rounded-lg">
+                <thead>
+                  <tr className="bg-gray-800 text-left">
+                    <th className="px-4 py-2 border-b border-gray-600">Rank</th>
+                    <th className="px-4 py-2 border-b border-gray-600">
+                      Player
+                    </th>
+                    <th className="px-4 py-2 border-b border-gray-600">
+                      Leagues
+                    </th>
+                    <th className="px-4 py-2 border-b border-gray-600">
+                      Points
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Example static rows, replace with Supabase data */}
+                  <tr>
+                    <td className="px-4 py-2 border-b border-gray-700">1</td>
+                    <td className="px-4 py-2 border-b border-gray-700">
+                      Alice
+                    </td>
+                    <td className="px-4 py-2 border-b border-gray-700">3</td>
+                    <td className="px-4 py-2 border-b border-gray-700">540</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2 border-b border-gray-700">2</td>
+                    <td className="px-4 py-2 border-b border-gray-700">Bob</td>
+                    <td className="px-4 py-2 border-b border-gray-700">2</td>
+                    <td className="px-4 py-2 border-b border-gray-700">410</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2 border-b border-gray-700">3</td>
+                    <td className="px-4 py-2 border-b border-gray-700">
+                      Charlie
+                    </td>
+                    <td className="px-4 py-2 border-b border-gray-700">4</td>
+                    <td className="px-4 py-2 border-b border-gray-700">390</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </main>
         <RightSection trendingTweets={trendingTweets} leaderboard={true} />

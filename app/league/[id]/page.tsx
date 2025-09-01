@@ -1,3 +1,4 @@
+import LeagueTabs from "@/components/client-components/league-tabs";
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSection from "@/components/RightSection";
 import BackButton from "@/components/ui/back-button";
@@ -49,9 +50,20 @@ export default async function LeaguePage() {
           <div className="flex flex-row items-center mt-4 mb-2 ml-2">
             <BackButton />
             <h1 className="text-xl font-bold px-6 backdrop-blur bg-black/10 sticky top-0">
-              League
+              League Name
             </h1>
           </div>
+          <div className="relative inline-block">
+            <div className="w-full h-40 bg-slate-400 mt-3"></div>
+            <div className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full bg-slate-50"></div>
+          </div>
+          <div className="flex flex-col pt-20 pb-4 px-4 border-b-[0.5px] border-gray-600">
+            <h1 className="text-2xl font-bold">League Name</h1>
+            <h1 className="text-sm text-gray-400">
+              League Manager: League Manager Username
+            </h1>
+          </div>
+          <LeagueTabs />
         </main>
         <RightSection />
       </div>
