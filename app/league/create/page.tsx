@@ -4,6 +4,7 @@ import BackButton from "@/components/ui/back-button";
 import LabeledSlider from "@/components/client-components/labeled-slider";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import LeagueNameInput from "@/components/client-components/league-name-input";
 
 export default async function CreatePage() {
   const supabase = await createClient();
@@ -50,9 +51,7 @@ export default async function CreatePage() {
             </h1>
           </div>
           <div className="flex flex-col mt-10">
-            <div className="text-center text-3xl text-gray-500 font-bold">
-              Insert League Name...
-            </div>
+            <LeagueNameInput />
             <div className="flex flex-col font-semibold mt-4 mx-6 gap-4">
               <LabeledSlider
                 label="How many players?"
