@@ -49,7 +49,7 @@ export default async function LeaguePage() {
           <div className="flex flex-row items-center mt-4 mb-2 ml-2">
             <BackButton />
             <h1 className="text-xl font-bold px-6 backdrop-blur bg-black/10 sticky top-0">
-              Your Leagues
+              League
             </h1>
           </div>
         </main>

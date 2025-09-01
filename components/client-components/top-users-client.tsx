@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { followUser } from "@/app/api/actions/followUser";
 import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
