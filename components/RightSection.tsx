@@ -1,7 +1,5 @@
 "use client";
 import { BsSearch } from "react-icons/bs";
-import { FaCrown } from "react-icons/fa";
-import { IoIosMedal } from "react-icons/io";
 import NavigateWrapper from "./client-components/navigate";
 import TrendingWindow from "./client-components/trending-window";
 
@@ -42,38 +40,40 @@ export default function RightSection({
         ) : (
           <NavigateWrapper to={"/leaderboard/CHANGETHISTOLEADERBOARDID"}>
             <div className="flex flex-col rounded-xl border-gray-600 border-[0.5px]">
-              <h3 className="text-center font-bold text-3xl pt-4 pb-2 px-4">
-                Best pickers
+              <h3 className="text-center font-bold text-xl pt-4 pb-3 px-4">
+                🏆 Best Pickers
               </h3>
-              <div className="flex flex-col items-center gap-2">
-                <div className="flex flex-row items-center justify-center">
-                  <div className="flex flex-col items-center justify-center">
-                    <FaCrown className="w-12 h-12 text-yellow-300" />
-                    <div className="w-20 h-20 bg-slate-400 rounded-full" />
-                    <p className="text-2xl text-center font-semibold break-words whitespace-normal max-w-[10rem]">
-                      c44rson
-                    </p>
+              
+              <div className="flex flex-col gap-3 px-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">🥇</span>
+                    <div className="w-10 h-10 bg-slate-400 rounded-full" />
+                    <p className="font-semibold">c44rson</p>
                   </div>
+                  <span className="text-sm text-gray-400">1,250 pts</span>
                 </div>
-                <div className="flex flex-row items-center justify-around w-full">
-                  <div className="flex flex-col items-center justify-center">
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">🥈</span>
                     <div className="w-10 h-10 bg-slate-400 rounded-full" />
-                    <IoIosMedal className="w-6 h-6 text-gray-500" />
-                    <p className="text-xs text-center font-semibold break-words whitespace-normal max-w-[5rem] min-w-[5rem]">
-                      c44rson
-                    </p>
+                    <p className="font-semibold">c44rson</p>
                   </div>
-                  <div className="flex flex-col items-center justify-center">
+                  <span className="text-sm text-gray-400">1,120 pts</span>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">🥉</span>
                     <div className="w-10 h-10 bg-slate-400 rounded-full" />
-                    <IoIosMedal className="w-6 h-6 text-amber-950" />
-                    <p className="text-xs text-center font-semibold break-words whitespace-normal max-w-[5rem] min-w-[5rem]">
-                      c44rson
-                    </p>
+                    <p className="font-semibold">c44rson</p>
                   </div>
+                  <span className="text-sm text-gray-400">985 pts</span>
                 </div>
 
-                <button className="w-36 h-10 rounded-full font-semibold border-gray-600 border-[0.5px] mt-2 mb-4">
-                  Full Rankings
+                <button className="w-32 h-10 rounded-full font-semibold border-gray-600 border-[0.5px] mt-2 mb-4 hover:bg-gray-800 transition-colors mx-auto">
+                  View All
                 </button>
               </div>
             </div>

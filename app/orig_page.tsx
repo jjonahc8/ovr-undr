@@ -21,7 +21,7 @@ export default async function Home() {
           <div className="text-2xl font-bold text-white">
             ovr/undr
           </div>
-          {/* <AuthButton /> */} 
+          <AuthButton />
         </div>
       </nav>
 
@@ -35,7 +35,7 @@ export default async function Home() {
             The social platform for sports betting enthusiasts. Share predictions, track performance, and compete with friends.
           </p>
           
-          {/* <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Link
               href="/auth/sign-up"
               className="bg-white text-black px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-200 transition-colors duration-200 min-w-[160px]"
@@ -48,12 +48,12 @@ export default async function Home() {
             >
               Sign In
             </Link>
-          </div> */}
+          </div>
 
           <div className="mb-8">
             <Link
               href="/mailing-list"
-              className="bg-white text-black px-6 py-3 rounded-lg font-semibold text-base hover:bg-gray-200 transition-colors duration-200 inline-block"
+              className="text-gray-400 hover:text-white transition-colors duration-200 underline"
             >
               Join our mailing list for updates
             </Link>

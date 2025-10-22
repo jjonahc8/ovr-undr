@@ -26,7 +26,7 @@ export function LeftSidebar({
         </div>
       </NavigateWrapper>
 
-      <div className="flex-1 overflow-y-auto mr-6 mt-6">
+      <div className="flex-1 overflow-y-auto mr-6 mt-8">
         <div className="flex flex-col gap-4">
           {create ? (
             <NavigateWrapper to={"/league/CHANGETHISTOLEAGUEID"}>
