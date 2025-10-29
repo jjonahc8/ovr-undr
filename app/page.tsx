@@ -19,7 +19,7 @@ export default async function Home() {
       <nav className="w-full border-b border-gray-700 bg-black/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="text-2xl font-bold text-white">
-            Ovr/Undr Sports
+            Ovr/Undr
           </div>
           {/* <AuthButton /> */} 
         </div>
