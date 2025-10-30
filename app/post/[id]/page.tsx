@@ -8,6 +8,7 @@ import ReplyFeedTimeline from "@/components/server-components/reply-feed";
 import TopUsers from "@/components/server-components/top-users";
 import { Suspense } from "react";
 import FocusedTweet from "@/components/server-components/focused-tweet";
+import Image from "next/image";
 
 export default async function PostPage(props: {
   params: Promise<{ id: string }>;
@@ -65,7 +66,13 @@ export default async function PostPage(props: {
                 <div className="w-10 h-10 bg-slate-400 rounded-full" />
               )}
               {avatar_link && (
-                <img className="w-10 h-10 rounded-full" src={avatar_link} />
+                <Image
+                  className="w-10 h-10 rounded-full"
+                  src={avatar_link}
+                  alt="profile avatar"
+                  height={48}
+                  width={48}
+                />
               )}
             </div>
             <div className="flex-1">

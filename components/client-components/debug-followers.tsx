@@ -2,16 +2,21 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import TestResults from "../types/testresults";
 
 export default function DebugFollowers() {
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<TestResults | null>(null);
   const [loading, setLoading] = useState(false);
 
   const supabase = createClient();
 
   const testQueries = async () => {
     setLoading(true);
-    const testResults: any = {};
+    const testResults: TestResults = {
+      followsTable: { data: null, error: null },
+      profilesTable: { data: null, error: null },
+      authUser: { data: null, error: null },
+    };
 
     try {
       // Test 1: Check if follows table exists and what columns it has
@@ -20,11 +25,11 @@ export default function DebugFollowers() {
         .from("follows")
         .select("*")
         .limit(1);
-      
+
       testResults.followsTable = {
         data: followsTest,
         error: followsError,
-        columns: followsTest?.[0] ? Object.keys(followsTest[0]) : "No data"
+        columns: followsTest?.[0] ? Object.keys(followsTest[0]) : "No data",
       };
 
       // Test 2: Check profiles table
@@ -33,19 +38,20 @@ export default function DebugFollowers() {
         .from("profiles")
         .select("*")
         .limit(1);
-      
+
       testResults.profilesTable = {
         data: profilesTest,
         error: profilesError,
-        columns: profilesTest?.[0] ? Object.keys(profilesTest[0]) : "No data"
+        columns: profilesTest?.[0] ? Object.keys(profilesTest[0]) : "No data",
       };
 
       // Test 3: Get current user
       console.log("Testing auth user...");
-      const { data: authData, error: authError } = await supabase.auth.getUser();
+      const { data: authData, error: authError } =
+        await supabase.auth.getUser();
       testResults.authUser = {
         data: authData,
-        error: authError
+        error: authError,
       };
 
       console.log("All test results:", testResults);
@@ -62,14 +68,14 @@ export default function DebugFollowers() {
   return (
     <div className="p-4 bg-gray-800 text-white rounded">
       <h3 className="text-lg font-bold mb-4">Database Debug Tool</h3>
-      <button 
+      <button
         onClick={testQueries}
         disabled={loading}
         className="bg-blue-600 px-4 py-2 rounded mb-4"
       >
         {loading ? "Testing..." : "Run Database Tests"}
       </button>
-      
+
       {results && (
         <div className="space-y-4">
           <div>
@@ -78,14 +84,14 @@ export default function DebugFollowers() {
               {JSON.stringify(results.followsTable, null, 2)}
             </pre>
           </div>
-          
+
           <div>
             <h4 className="font-bold">Profiles Table:</h4>
             <pre className="text-xs bg-black p-2 rounded overflow-auto">
               {JSON.stringify(results.profilesTable, null, 2)}
             </pre>
           </div>
-          
+
           <div>
             <h4 className="font-bold">Auth User:</h4>
             <pre className="text-xs bg-black p-2 rounded overflow-auto">

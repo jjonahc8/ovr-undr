@@ -1,8 +1,10 @@
 import TweetCard from "./client-components/tweet-card";
+import { TweetAuthorParentView } from "./types/tweetsauthorsparents";
+import { ClientLike } from "./types/clientlikes";
 
 const MainComponent = async function (
-  tweetsAuthorsParents: any[] | null,
-  clientLikes: any[] | null,
+  tweetsAuthorsParents: TweetAuthorParentView[] | null,
+  clientLikes: ClientLike[] | null,
   likeMap: Map<string, number>,
   commentCountMap: Map<string, number>,
   currentUserId?: string
@@ -17,6 +19,7 @@ const MainComponent = async function (
         text: tAP.parent_text,
         created_at: tAP.parent_created_at,
         user_id: tAP.parent_user_id,
+        parent_id: null,
         author: tAP.parent_author_username,
         file_link: tAP.parent_file_link,
       },
@@ -38,7 +41,7 @@ const MainComponent = async function (
               author: tAP.author_username,
               file_link: tAP.file_link,
             }}
-            parent={tAP.parent_id ? parentMap.get(tAP.parent_id) : null}
+            parent={tAP.parent_id ? parentMap.get(tAP.parent_id) : undefined}
             tweetsAuthorsParents={tweetsAuthorsParents}
             clientLikes={clientLikes}
             likeMap={likeMap}

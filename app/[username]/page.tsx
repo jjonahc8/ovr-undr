@@ -39,7 +39,7 @@ export default async function UserPage(props: {
 
   const profileUsername = params.username;
 
-  let { data: profileUser, error: profileUserError } = await supabase
+  const { data: profileUser, error: profileUserError } = await supabase
     .from("profiles")
     .select("*")
     .eq("username", profileUsername)
@@ -104,14 +104,20 @@ export default async function UserPage(props: {
             />
           </Suspense>
         </main>
-        <RightSection 
+        <RightSection
           topUsersComponent={
-            <Suspense fallback={
-              <div className="rounded-xl border-gray-600 border-[0.5px]">
-                <h3 className="text-left font-bold text-xl pt-4 pb-2 px-4">You might know</h3>
-                <div className="p-4 text-center text-gray-500">Loading...</div>
-              </div>
-            }>
+            <Suspense
+              fallback={
+                <div className="rounded-xl border-gray-600 border-[0.5px]">
+                  <h3 className="text-left font-bold text-xl pt-4 pb-2 px-4">
+                    You might know
+                  </h3>
+                  <div className="p-4 text-center text-gray-500">
+                    Loading...
+                  </div>
+                </div>
+              }
+            >
               <TopUsers currentUserId={authUserData.claims.sub} />
             </Suspense>
           }

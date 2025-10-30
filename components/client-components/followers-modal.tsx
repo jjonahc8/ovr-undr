@@ -3,22 +3,8 @@
 import { useState, useEffect, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-
-interface User {
-  id: string;
-  username: string;
-  first_name: string;
-  last_name: string;
-  pfp_link: string | null;
-}
-
-interface FollowersModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  userId: string;
-  username: string;
-  tab: "followers" | "following";
-}
+import Image from "next/image";
+import { User } from "../types/user";
 
 export default function FollowersModal({
   isOpen,
@@ -26,7 +12,13 @@ export default function FollowersModal({
   userId,
   username,
   tab: initialTab,
-}: FollowersModalProps) {
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  userId: string;
+  username: string;
+  tab: "followers" | "following";
+}) {
   const [activeTab, setActiveTab] = useState<"followers" | "following">(
     initialTab
   );
@@ -43,89 +35,87 @@ export default function FollowersModal({
   const router = useRouter();
 
   useEffect(() => {
-    if (isOpen) {
-      getCurrentUser();
-      fetchData();
-    }
-  }, [isOpen, activeTab, userId]);
+    const initializeData = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  const getCurrentUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
 
-    if (user) {
-      setCurrentUserId(user.id);
-
-      // fetch who the logged-in user is following
-      const { data: followData } = await supabase
-        .from("follows")
-        .select("followee_id")
-        .eq("follower_id", user.id);
-
-      if (followData) {
-        setFollowingSet(new Set(followData.map((f) => f.followee_id)));
-      }
-    }
-  };
-
-  const fetchData = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      if (activeTab === "followers") {
-        const { data: followData, error: followError } = await supabase
-          .from("follows")
-          .select("follower_id")
-          .eq("followee_id", userId);
-
-        if (followError) throw followError;
-
-        if (followData?.length) {
-          const followerIds = followData.map((f) => f.follower_id);
-
-          const { data: profileData, error: profileError } = await supabase
-            .from("profiles")
-            .select("id, username, first_name, last_name, pfp_link")
-            .in("id", followerIds);
-
-          if (profileError) throw profileError;
-
-          setFollowers(profileData || []);
-        } else {
-          setFollowers([]);
-        }
-      } else {
-        const { data: followData, error: followError } = await supabase
+        // fetch who the logged-in user is following
+        const { data: followData } = await supabase
           .from("follows")
           .select("followee_id")
-          .eq("follower_id", userId);
+          .eq("follower_id", user.id);
 
-        if (followError) throw followError;
-
-        if (followData?.length) {
-          const followingIds = followData.map((f) => f.followee_id);
-
-          const { data: profileData, error: profileError } = await supabase
-            .from("profiles")
-            .select("id, username, first_name, last_name, pfp_link")
-            .in("id", followingIds);
-
-          if (profileError) throw profileError;
-
-          setFollowing(profileData || []);
-        } else {
-          setFollowing([]);
+        if (followData) {
+          setFollowingSet(new Set(followData.map((f) => f.followee_id)));
         }
       }
-    } catch (err) {
-      console.error("Error fetching data:", err);
-      setError("Failed to load data");
-    } finally {
-      setLoading(false);
+
+      // Fetch followers or following data
+      setLoading(true);
+      setError(null);
+
+      try {
+        if (activeTab === "followers") {
+          const { data: followData, error: followError } = await supabase
+            .from("follows")
+            .select("follower_id")
+            .eq("followee_id", userId);
+
+          if (followError) throw followError;
+
+          if (followData?.length) {
+            const followerIds = followData.map((f) => f.follower_id);
+
+            const { data: profileData, error: profileError } = await supabase
+              .from("profiles")
+              .select("id, username, first_name, last_name, pfp_link")
+              .in("id", followerIds);
+
+            if (profileError) throw profileError;
+
+            setFollowers(profileData || []);
+          } else {
+            setFollowers([]);
+          }
+        } else {
+          const { data: followData, error: followError } = await supabase
+            .from("follows")
+            .select("followee_id")
+            .eq("follower_id", userId);
+
+          if (followError) throw followError;
+
+          if (followData?.length) {
+            const followingIds = followData.map((f) => f.followee_id);
+
+            const { data: profileData, error: profileError } = await supabase
+              .from("profiles")
+              .select("id, username, first_name, last_name, pfp_link")
+              .in("id", followingIds);
+
+            if (profileError) throw profileError;
+
+            setFollowing(profileData || []);
+          } else {
+            setFollowing([]);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isOpen) {
+      initializeData();
     }
-  };
+  }, [isOpen, activeTab, userId, supabase]);
 
   const handleFollow = (targetUserId: string) => {
     if (!currentUserId) return;
@@ -235,10 +225,12 @@ export default function FollowersModal({
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex-none">
                       {user.pfp_link ? (
-                        <img
+                        <Image
                           src={user.pfp_link}
                           alt={user.username}
                           className="w-10 h-10 min-w-10 min-h-10 rounded-full"
+                          height={48}
+                          width={48}
                         />
                       ) : (
                         <div className="w-10 h-10 min-w-10 min-h-10 bg-gray-600 rounded-full" />

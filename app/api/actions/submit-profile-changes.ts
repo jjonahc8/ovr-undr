@@ -26,22 +26,21 @@ async function submitProfileChanges(formData: FormData) {
     console.error("Error fetching current profile: ", profileDataError);
   }
 
-  let firstName = formData.get("firstName")
+  const firstName = formData.get("firstName")
     ? formData.get("firstName")
     : profileData?.[0].first_name;
-  let lastName = formData.get("lastName")
+  const lastName = formData.get("lastName")
     ? formData.get("lastName")
     : profileData?.[0].last_name;
-  let bio = formData.get("bio") ? formData.get("bio") : profileData?.[0].bio;
-  let banner = formData.get("banner");
-  let pfp = formData.get("pfp");
+  const bio = formData.get("bio") ? formData.get("bio") : profileData?.[0].bio;
+  const banner = formData.get("banner");
+  const pfp = formData.get("pfp");
 
   if (banner) {
     const bannerID = uuidv4();
-    const { data: uploadBannerData, error: uploadBannerError } =
-      await supabase.storage
-        .from("banner")
-        .upload(authUserID + "/" + bannerID, banner);
+    const { error: uploadBannerError } = await supabase.storage
+      .from("banner")
+      .upload(authUserID + "/" + bannerID, banner);
 
     if (uploadBannerError) {
       console.error("File upload error:", uploadBannerError);
@@ -49,11 +48,10 @@ async function submitProfileChanges(formData: FormData) {
     }
     const banner_image_link = `https://qzewmoffplkvyftuarjb.supabase.co/storage/v1/object/public/banner/${authUserID}/${bannerID}`;
 
-    const { data: profileUpdateData, error: profileUpdateError } =
-      await supabase
-        .from("profiles")
-        .update({ banner_link: banner_image_link })
-        .eq("id", authUserID);
+    const { error: profileUpdateError } = await supabase
+      .from("profiles")
+      .update({ banner_link: banner_image_link })
+      .eq("id", authUserID);
 
     if (profileUpdateError) {
       console.error("Error updating profile: ", profileUpdateError);
@@ -62,8 +60,9 @@ async function submitProfileChanges(formData: FormData) {
 
   if (pfp) {
     const pfpID = uuidv4();
-    const { data: uploadPFPData, error: uploadPFPError } =
-      await supabase.storage.from("pfp").upload(authUserID + "/" + pfpID, pfp);
+    const { error: uploadPFPError } = await supabase.storage
+      .from("pfp")
+      .upload(authUserID + "/" + pfpID, pfp);
 
     if (uploadPFPError) {
       console.error("File upload error:", uploadPFPError);
@@ -71,18 +70,17 @@ async function submitProfileChanges(formData: FormData) {
     }
     const pfp_image_link = `https://qzewmoffplkvyftuarjb.supabase.co/storage/v1/object/public/pfp/${authUserID}/${pfpID}`;
 
-    const { data: profileUpdateData, error: profileUpdateError } =
-      await supabase
-        .from("profiles")
-        .update({ pfp_link: pfp_image_link })
-        .eq("id", authUserID);
+    const { error: profileUpdateError } = await supabase
+      .from("profiles")
+      .update({ pfp_link: pfp_image_link })
+      .eq("id", authUserID);
 
     if (profileUpdateError) {
       console.error("Error updating profile: ", profileUpdateError);
     }
   }
 
-  const { data: profileUpdateData, error: profileUpdateError } = await supabase
+  const { error: profileUpdateError } = await supabase
     .from("profiles")
     .update({ first_name: firstName, last_name: lastName, bio: bio })
     .eq("id", authUserID);

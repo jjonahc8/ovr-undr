@@ -2,6 +2,7 @@
 import { BsSearch } from "react-icons/bs";
 import NavigateWrapper from "./client-components/navigate";
 import TrendingWindow from "./client-components/trending-window";
+import { TrendingTweetView } from "./types/trendingtweets";
 
 export default function RightSection({
   leaderboard,
@@ -9,7 +10,7 @@ export default function RightSection({
   topUsersComponent,
 }: {
   leaderboard?: boolean;
-  trendingTweets?: any[] | null;
+  trendingTweets?: TrendingTweetView[] | null;
   topUsersComponent?: React.ReactNode;
 }) {
   return (
@@ -43,7 +44,7 @@ export default function RightSection({
               <h3 className="text-center font-bold text-xl pt-4 pb-3 px-4">
                 🏆 Best Pickers
               </h3>
-              
+
               <div className="flex flex-col gap-3 px-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -53,7 +54,7 @@ export default function RightSection({
                   </div>
                   <span className="text-sm text-gray-400">1,250 pts</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="text-xl">🥈</span>
@@ -62,7 +63,7 @@ export default function RightSection({
                   </div>
                   <span className="text-sm text-gray-400">1,120 pts</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="text-xl">🥉</span>

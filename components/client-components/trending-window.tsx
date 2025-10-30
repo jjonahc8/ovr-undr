@@ -2,11 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import NavigateWrapper from "./navigate";
+import { TrendingTweetView } from "../types/trendingtweets";
 
 export default function TrendingWindow({
   trendingTweets,
 }: {
-  trendingTweets?: any[] | null;
+  trendingTweets?: TrendingTweetView[] | null;
 }) {
   const router = useRouter();
 

@@ -7,6 +7,9 @@ import EditProfileTrigger from "./edit-profile-trigger";
 import { followUser } from "@/app/api/actions/followUser";
 import { Button } from "../ui/button";
 import FollowersModal from "./followers-modal";
+import ProfileUser from "../types/profileuser";
+import AuthProfile from "../types/authprofile";
+import Image from "next/image";
 
 export default function ProfileCard({
   submitProfileChanges,
@@ -17,8 +20,8 @@ export default function ProfileCard({
   followingCount,
 }: {
   submitProfileChanges: (formData: FormData) => Promise<void>;
-  authProfile: any;
-  profileUser: any;
+  authProfile: AuthProfile;
+  profileUser: ProfileUser;
   isFollowing: boolean;
   followersCount: number;
   followingCount: number;
@@ -64,20 +67,24 @@ export default function ProfileCard({
       </div>
       <div className="relative inline-block">
         {profileUser.banner_link && (
-          <img
+          <Image
             className="w-full h-40 mt-3"
             src={profileUser.banner_link}
             alt="profile banner"
+            height={1920}
+            width={1080}
           />
         )}
         {!profileUser.banner_link && (
           <div className="w-full h-40 bg-slate-400 mt-3"></div>
         )}
         {profileUser.pfp_link && (
-          <img
+          <Image
             className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full"
             src={profileUser.pfp_link}
             alt="profile picture"
+            height={1920}
+            width={1080}
           />
         )}
         {!profileUser.pfp_link && (

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import TextareaAutosize from "react-textarea-autosize";
 import { GoFileMedia } from "react-icons/go";
+import Image from "next/image";
 
 export default function ComposeTweetForm({
   submitTweet,
@@ -17,10 +18,6 @@ export default function ComposeTweetForm({
 
   const [placeholder, setPlaceholder] = useState("What's the play?");
   const [paddingY, setPaddingY] = useState("py-4");
-  const [borderT, setBorderT] = useState("border-t-[0.5px] border-gray-600");
-  const [marginT, setMarginT] = useState("mt-6");
-  const [marginL, setMarginL] = useState("ml-5");
-  const [paddingX, setPaddingX] = useState("px-4");
   const [textSize, setTextSize] = useState("text-xl");
   const [postButtonName, setPostButtonName] = useState("Plot");
 
@@ -31,10 +28,6 @@ export default function ComposeTweetForm({
     if (pathname.slice(0, 5) === "/post") {
       setPlaceholder("What do you think?");
       setPaddingY("pt-0");
-      setBorderT("");
-      setMarginT("mt-2");
-      setMarginL("ml-2");
-      setPaddingX("px-2");
       setTextSize("text-xl");
       setPostButtonName("Reply");
       setParent(pathname.slice(6));
@@ -89,10 +82,12 @@ export default function ComposeTweetForm({
           >
             ×
           </button>
-          <img
+          <Image
             src={imagePreviewUrl}
             alt="Preview"
             className="rounded-2xl w-full border border-gray-700"
+            height={48}
+            width={48}
           />
         </div>
       )}

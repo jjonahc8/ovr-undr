@@ -1,4 +1,4 @@
-export default function generateDate(supabaseDate: any): string {
+export default function generateDate(supabaseDate: string): string {
   const nowDate: Date = new Date();
   const postDate: Date = new Date(supabaseDate);
   const timeDifferenceInMilliseconds = nowDate.getTime() - postDate.getTime();

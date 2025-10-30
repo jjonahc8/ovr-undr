@@ -7,6 +7,7 @@ import MainFeedTimeline from "@/components/server-components/main-feed";
 import TopUsers from "@/components/server-components/top-users";
 import ScrollableHeader from "@/components/client-components/scrollable-header";
 import { Suspense } from "react";
+import Image from "next/image";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
@@ -44,7 +45,13 @@ export default async function ProtectedPage() {
                   <div className="w-12 h-12 bg-slate-400 rounded-full" />
                 )}
                 {avatar_link && (
-                  <img className="w-12 h-12 rounded-full" src={avatar_link} />
+                  <Image
+                    className="w-12 h-12 rounded-full"
+                    src={`${avatar_link}`}
+                    alt="profile avatar"
+                    width={48}
+                    height={48}
+                  />
                 )}
               </div>
               <div className="flex-1">

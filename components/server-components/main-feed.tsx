@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import MainComponent from "../MainComponent";
+import { CountRow } from "../types/countrow";
 
 export default async function MainFeedTimeline({ userId }: { userId: string }) {
   const supabase = await createClient();
@@ -25,7 +26,7 @@ export default async function MainFeedTimeline({ userId }: { userId: string }) {
     supabase.rpc("get_like_counts", { tweet_ids: tweetIds }),
     supabase
       .from("likes")
-      .select("tweet_id")
+      .select("tweet_id, user_id")
       .eq("user_id", userId)
       .in("tweet_id", tweetIds),
     supabase.rpc("get_reply_counts", { tweet_ids: tweetIds }),
@@ -36,12 +37,12 @@ export default async function MainFeedTimeline({ userId }: { userId: string }) {
   if (replyCountError) console.error("Reply Count Error:", replyCountError);
 
   const commentCountMap = new Map<string, number>();
-  replyCounts?.forEach((row: any) => {
+  replyCounts?.forEach((row: CountRow) => {
     commentCountMap.set(row.tweet_id, Number(row.count) ?? 0);
   });
 
   const likeMap = new Map<string, number>();
-  likeCounts?.forEach((row: any) => {
+  likeCounts?.forEach((row: CountRow) => {
     likeMap.set(row.tweet_id, Number(row.count) ?? 0);
   });
 

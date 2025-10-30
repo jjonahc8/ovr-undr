@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import TextareaAutosize from "react-textarea-autosize";
+import Image from "next/image";
 
 export default function EditProfileModal({
   onClose,
@@ -39,13 +40,13 @@ export default function EditProfileModal({
     onClose();
   };
 
-  const handleBanner = async (e: any) => {
+  const handleBanner = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     setBanner(file);
     setBannerPreviewURL(file ? URL.createObjectURL(file) : null);
   };
 
-  const handlePFP = async (e: any) => {
+  const handlePFP = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     setPFP(file);
     setPFPPreviewURL(file ? URL.createObjectURL(file) : null);
@@ -89,10 +90,12 @@ export default function EditProfileModal({
             )}
             {bannerPreviewURL && (
               <div className="relative">
-                <img
+                <Image
                   src={bannerPreviewURL}
                   alt="Preview"
                   className="rounded-xl w-full h-32"
+                  height={1080}
+                  width={1920}
                 />
                 <button
                   type="button"
@@ -132,10 +135,12 @@ export default function EditProfileModal({
             )}
             {pfpPreviewURL && (
               <div className="absolute left-4 bottom-0 translate-y-1/2 inline-block group overflow-hidden rounded-full h-32 w-32">
-                <img
+                <Image
                   src={pfpPreviewURL}
                   alt="Preview"
                   className="h-full w-full object-cover"
+                  height={1080}
+                  width={1920}
                 />
                 <button
                   type="button"

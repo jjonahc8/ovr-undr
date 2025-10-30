@@ -4,6 +4,8 @@ import { BsThreeDots } from "react-icons/bs";
 import { LogoutButton } from "./client-components/logout-button";
 import NavigateWrapper from "./client-components/navigate";
 import TrendingWindow from "./client-components/trending-window";
+import { TrendingTweetView } from "./types/trendingtweets";
+import Image from "next/image";
 
 export function LeftSidebar({
   avatar_link,
@@ -16,13 +18,15 @@ export function LeftSidebar({
   username: string | null;
   create?: boolean;
   league?: boolean;
-  trendingTweets?: any[] | null;
+  trendingTweets?: TrendingTweetView[] | null;
 }) {
   return (
     <section className="w-[35%] sticky top-0 flex flex-col h-screen">
       <NavigateWrapper to={"/"}>
         <div className="text-3xl font-bold rounded-xl w-fit mt-4 mr-6">
-          <h1 className="bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent">ovr/undr</h1>
+          <h1 className="bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent">
+            ovr/undr
+          </h1>
         </div>
       </NavigateWrapper>
 
@@ -38,9 +42,12 @@ export function LeftSidebar({
                     {!avatar_link ? (
                       <div className="w-6 h-6 bg-slate-400 rounded-full" />
                     ) : (
-                      <img
+                      <Image
                         className="rounded-full min-w-6 w-6 min-h-6 h-6"
-                        src={avatar_link}
+                        src={`${avatar_link}?v=${Date.now()}`}
+                        alt="profile avatar"
+                        width={48}
+                        height={48}
                       />
                     )}
                   </div>
@@ -92,9 +99,12 @@ export function LeftSidebar({
                     {!avatar_link ? (
                       <div className="w-6 h-6 bg-slate-400 rounded-full" />
                     ) : (
-                      <img
+                      <Image
                         className="rounded-full min-w-6 w-6 min-h-6 h-6"
-                        src={avatar_link}
+                        src={`${avatar_link}`}
+                        alt="profile avatar"
+                        width={48}
+                        height={48}
                       />
                     )}
                   </div>
@@ -120,9 +130,12 @@ export function LeftSidebar({
               {!avatar_link ? (
                 <div className="w-10 h-10 bg-slate-400 rounded-full" />
               ) : (
-                <img
+                <Image
                   className="rounded-full min-w-10 w-10 min-h-10 h-10"
-                  src={avatar_link}
+                  src={`${avatar_link}`}
+                  alt="profile avatar"
+                  width={48}
+                  height={48}
                 />
               )}
               <div className="text-left text-sm">{username}</div>

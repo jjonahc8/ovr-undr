@@ -1,16 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 import TweetCard from "../client-components/tweet-card";
+import AuthProfile from "../types/authprofile";
+import ProfileUser from "../types/profileuser";
+import { CountRow } from "../types/countrow";
 
 export default async function ProfileFeedTimeline({
   authProfile,
   profileUser,
 }: {
-  authProfile: any;
-  profileUser: any;
+  authProfile: AuthProfile;
+  profileUser: ProfileUser;
 }) {
   const supabase = await createClient();
 
-  let { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
+  const { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
     .from("tweets_with_authors_and_parents")
     .select("*")
     .eq("user_id", profileUser.id)
@@ -31,7 +34,7 @@ export default async function ProfileFeedTimeline({
     supabase.rpc("get_like_counts", { tweet_ids: tweetIds }),
     supabase
       .from("likes")
-      .select("tweet_id")
+      .select("tweet_id, user_id")
       .eq("user_id", authProfile.id)
       .in("tweet_id", tweetIds),
     supabase.rpc("get_reply_counts", { tweet_ids: tweetIds }),
@@ -42,12 +45,12 @@ export default async function ProfileFeedTimeline({
   if (replyCountError) console.error("Reply Count Error:", replyCountError);
 
   const commentCountMap = new Map<string, number>();
-  replyCounts?.forEach((row: any) => {
+  replyCounts?.forEach((row: CountRow) => {
     commentCountMap.set(row.tweet_id, Number(row.count) ?? 0);
   });
 
   const likeMap = new Map<string, number>();
-  likeCounts?.forEach((row: any) => {
+  likeCounts?.forEach((row: CountRow) => {
     likeMap.set(row.tweet_id, Number(row.count) ?? 0);
   });
 
@@ -78,7 +81,7 @@ export default async function ProfileFeedTimeline({
             author: tAP.author_username,
             file_link: tAP.file_link,
           }}
-          parent={tAP.parent_id ? parentMap.get(tAP.parent_id) : null}
+          parent={tAP.parent_id ? parentMap.get(tAP.parent_id) : undefined}
           tweetsAuthorsParents={tweetsAuthorsParents}
           clientLikes={clientLikes}
           likeMap={likeMap}

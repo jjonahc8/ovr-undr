@@ -62,7 +62,7 @@ export default async function LeaderboardPage() {
                   </div>
                   <span className="text-sm text-gray-400">540 pts</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between py-2">
                   <div className="flex items-center gap-3">
                     <span className="text-xl">🥈</span>
@@ -74,7 +74,7 @@ export default async function LeaderboardPage() {
                   </div>
                   <span className="text-sm text-gray-400">410 pts</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between py-2">
                   <div className="flex items-center gap-3">
                     <span className="text-xl">🥉</span>
@@ -90,7 +90,9 @@ export default async function LeaderboardPage() {
                 <div className="border-t border-gray-600 pt-3">
                   <div className="flex items-center justify-between py-2">
                     <div className="flex items-center gap-3">
-                      <span className="text-sm text-gray-500 w-6 text-center">4</span>
+                      <span className="text-sm text-gray-500 w-6 text-center">
+                        4
+                      </span>
                       <div className="w-10 h-10 bg-slate-400 rounded-full" />
                       <div>
                         <p className="font-semibold">David</p>
@@ -99,10 +101,12 @@ export default async function LeaderboardPage() {
                     </div>
                     <span className="text-sm text-gray-400">310 pts</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between py-2">
                     <div className="flex items-center gap-3">
-                      <span className="text-sm text-gray-500 w-6 text-center">5</span>
+                      <span className="text-sm text-gray-500 w-6 text-center">
+                        5
+                      </span>
                       <div className="w-10 h-10 bg-slate-400 rounded-full" />
                       <div>
                         <p className="font-semibold">Eve</p>
@@ -111,10 +115,12 @@ export default async function LeaderboardPage() {
                     </div>
                     <span className="text-sm text-gray-400">280 pts</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between py-2">
                     <div className="flex items-center gap-3">
-                      <span className="text-sm text-gray-500 w-6 text-center">6</span>
+                      <span className="text-sm text-gray-500 w-6 text-center">
+                        6
+                      </span>
                       <div className="w-10 h-10 bg-slate-400 rounded-full" />
                       <div>
                         <p className="font-semibold">Frank</p>

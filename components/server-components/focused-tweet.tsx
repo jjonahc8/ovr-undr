@@ -1,12 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
 import TweetCard from "../client-components/tweet-card";
+import { ParentTweet, Tweet } from "../types/tweet";
+import { ClientLike } from "../types/clientlikes";
+import { PageParams } from "../types/pageparams";
+import AuthProfile from "../types/authprofile";
+import { CountRow } from "../types/countrow";
 
 export default async function FocusedTweet({
   params,
   authProfile,
 }: {
-  params: any;
-  authProfile: any;
+  params: PageParams;
+  authProfile: AuthProfile;
 }) {
   const supabase = await createClient();
 
@@ -22,7 +27,7 @@ export default async function FocusedTweet({
 
   const tAP = tweetsAuthorsParents[0];
 
-  const tweet = {
+  const tweet: Tweet = {
     id: tAP.id,
     text: tAP.text,
     created_at: tAP.created_at,
@@ -33,14 +38,14 @@ export default async function FocusedTweet({
   };
 
   const parent_id = tAP.parent_tweet_id;
-  let parent = null;
+  let parent: ParentTweet | undefined = undefined;
   if (parent_id) {
     parent = {
-      id: tAP.parent_tweet_id,
-      text: tAP.parent_text,
+      id: tAP.parent_tweet_id!,
+      text: tAP.parent_text!,
       created_at: tAP.created_at,
-      user_id: tAP.parent_user_id,
-      author: tAP.parent_author_username,
+      user_id: tAP.parent_user_id!,
+      author: tAP.parent_author_username!,
       file_link: tAP.parent_file_link,
     };
   }
@@ -64,21 +69,22 @@ export default async function FocusedTweet({
   if (replyCountError) console.error("Reply Count Error:", replyCountError);
 
   const commentCountMap = new Map<string, number>();
-  replyCounts?.forEach((row: any) => {
+  replyCounts?.forEach((row: CountRow) => {
     commentCountMap.set(row.tweet_id, Number(row.count) ?? 0);
   });
 
   const likeMap = new Map<string, number>();
-  likeCounts?.forEach((row: any) => {
+  likeCounts?.forEach((row: CountRow) => {
     likeMap.set(row.tweet_id, Number(row.count) ?? 0);
   });
+
   return (
     <div>
       <TweetCard
         tweet={tweet}
         parent={parent}
         tweetsAuthorsParents={tweetsAuthorsParents}
-        clientLikes={clientLikes}
+        clientLikes={clientLikes as ClientLike[]}
         likeMap={likeMap}
         commentCountMap={commentCountMap}
         currentUserId={authProfile.id}

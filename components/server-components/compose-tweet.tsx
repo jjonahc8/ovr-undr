@@ -23,7 +23,7 @@ const ComposeTweet = () => {
     if (file) {
       const fileID = uuidv4();
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from("uploads")
         .upload(user?.id + "/" + fileID, file);
 
@@ -34,28 +34,24 @@ const ComposeTweet = () => {
 
       const image_link = `https://qzewmoffplkvyftuarjb.supabase.co/storage/v1/object/public/uploads/${user?.id}/${fileID}`;
 
-      const { data: tweetInsertData, error: tweetInsertError } = await supabase
-        .from("tweets")
-        .insert({
-          text: tweet,
-          user_id: user?.id,
-          author: user?.user_metadata.display_name,
-          file_link: image_link,
-          parent_id: parent,
-        });
+      const { error: tweetInsertError } = await supabase.from("tweets").insert({
+        text: tweet,
+        user_id: user?.id,
+        author: user?.user_metadata.display_name,
+        file_link: image_link,
+        parent_id: parent,
+      });
 
       if (tweetInsertError) {
         console.error("Database Tweet Insert Error:", tweetInsertError);
       }
     } else {
-      const { data: tweetInsertData, error: tweetInsertError } = await supabase
-        .from("tweets")
-        .insert({
-          text: tweet,
-          user_id: user?.id,
-          author: user?.user_metadata.display_name,
-          parent_id: parent,
-        });
+      const { error: tweetInsertError } = await supabase.from("tweets").insert({
+        text: tweet,
+        user_id: user?.id,
+        author: user?.user_metadata.display_name,
+        parent_id: parent,
+      });
 
       if (tweetInsertError) {
         console.error("Database Tweet Insert Error:", tweetInsertError);

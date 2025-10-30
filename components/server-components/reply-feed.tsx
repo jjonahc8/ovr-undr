@@ -1,12 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import TweetCard from "../client-components/tweet-card";
+import { PageParams } from "../types/pageparams";
+import AuthProfile from "../types/authprofile";
+import { CountRow } from "../types/countrow";
 
 export default async function ReplyFeedTimeline({
   params,
   authProfile,
 }: {
-  params: any;
-  authProfile: any;
+  params: PageParams;
+  authProfile: AuthProfile;
 }) {
   const supabase = await createClient();
   const { data: tweetsAuthorsParents, error: tweetFetchError } = await supabase
@@ -31,7 +34,7 @@ export default async function ReplyFeedTimeline({
     supabase.rpc("get_like_counts", { tweet_ids: tweetIds }),
     supabase
       .from("likes")
-      .select("tweet_id")
+      .select("tweet_id, user_id")
       .eq("user_id", authProfile.id)
       .in("tweet_id", tweetIds),
     supabase.rpc("get_reply_counts", { tweet_ids: tweetIds }),
@@ -42,17 +45,17 @@ export default async function ReplyFeedTimeline({
   if (replyCountError) console.error("Reply Count Error:", replyCountError);
 
   const commentCountMap = new Map<string, number>();
-  replyCounts?.forEach((row: any) => {
+  replyCounts?.forEach((row: CountRow) => {
     commentCountMap.set(row.tweet_id, Number(row.count) ?? 0);
   });
 
   const likeMap = new Map<string, number>();
-  likeCounts?.forEach((row: any) => {
+  likeCounts?.forEach((row: CountRow) => {
     likeMap.set(row.tweet_id, Number(row.count) ?? 0);
   });
   return (
     <div className="flex flex-col border-gray-600">
-      {(replies ?? []).reverse().map((reply, i) => (
+      {(replies ?? []).reverse().map((reply) => (
         <TweetCard
           key={reply.id}
           tweet={{

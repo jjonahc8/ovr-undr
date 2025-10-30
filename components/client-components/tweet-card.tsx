@@ -14,6 +14,10 @@ import {
 import { useRouter, usePathname } from "next/navigation";
 import generateDate from "../utilities/generateDate";
 import NavigateWrapper from "./navigate";
+import { ClientLike } from "../types/clientlikes";
+import { TweetAuthorParentView } from "../types/tweetsauthorsparents";
+import { ParentTweet, Tweet } from "../types/tweet";
+import Image from "next/image";
 
 export default function TweetCard({
   tweet,
@@ -25,11 +29,11 @@ export default function TweetCard({
   commentCountMap,
   currentUserId,
 }: {
-  tweet: any;
-  parent?: any;
+  tweet: Tweet | ParentTweet;
+  parent?: ParentTweet;
   window?: boolean;
-  tweetsAuthorsParents: any[] | null;
-  clientLikes?: any[] | null;
+  tweetsAuthorsParents: TweetAuthorParentView[] | null;
+  clientLikes?: ClientLike[] | null;
   likeMap?: Map<string, number>;
   commentCountMap?: Map<string, number>;
   currentUserId?: string;
@@ -39,13 +43,13 @@ export default function TweetCard({
   const [focused, setFocused] = useState(false);
   const [liked, setLiked] = useState<boolean>(false);
   const pathname = usePathname();
-  const date = new Date(tweet.created_at);
+  const date = tweet.created_at ? new Date(tweet.created_at) : new Date();
   const formatted_date = format(date, "MMMM d, yyyy");
   const formatted_time = format(date, "h:mm a");
-  const [likeCount, setLikeCount] = useState(likeMap?.get(tweet.id));
-  const [commentCount, setCommentCount] = useState(
-    commentCountMap?.get(tweet.id)
+  const [likeCount, setLikeCount] = useState(
+    tweet.id ? likeMap?.get(tweet.id) : undefined
   );
+  const commentCount = tweet.id ? commentCountMap?.get(tweet.id) : undefined;
 
   async function handleDelete() {
     if (
@@ -128,7 +132,7 @@ export default function TweetCard({
     if (clientLikes?.some((like) => like.tweet_id === tweet.id)) {
       setLiked(true);
     }
-  }, [pathname, isFocusedTweet]);
+  }, [pathname, isFocusedTweet, tweet.id, clientLikes]);
 
   return !focused ? (
     <div
@@ -143,9 +147,12 @@ export default function TweetCard({
             <div className={`${avatarSize} bg-slate-200 rounded-full`} />
           )}
           {avatarMap.get(tweet.user_id) && (
-            <img
+            <Image
               className={`${avatarSize} rounded-full`}
               src={avatarMap.get(tweet.user_id)}
+              alt="avatar"
+              height={48}
+              width={48}
             />
           )}
         </NavigateWrapper>
@@ -200,10 +207,12 @@ export default function TweetCard({
         )}
         {tweet.file_link && (
           <div className="mt-2 mr-3">
-            <img
+            <Image
               src={tweet.file_link}
               alt="Attached file"
               className="w-full h-auto rounded-xl"
+              height={1920}
+              width={1080}
             />
           </div>
         )}
@@ -223,7 +232,9 @@ export default function TweetCard({
             <div
               onClick={(e) => {
                 e.stopPropagation();
-                toggleLike(tweet.id);
+                if (tweet.id) {
+                  toggleLike(tweet.id);
+                }
               }}
               className={`flex flex-row items-center justify-center cursor-pointer group ${
                 liked ? "text-red-500 fill-red-500" : "text-gray-500"
@@ -256,9 +267,12 @@ export default function TweetCard({
                   <div className="min-w-10 w-10 min-h-10 h-10 bg-slate-400 rounded-full" />
                 )}
                 {avatarMap.get(tweet.user_id) && (
-                  <img
+                  <Image
                     className="min-w-10 w-10 min-h-10 h-10 rounded-full"
                     src={avatarMap.get(tweet.user_id)}
+                    alt="avatar"
+                    height={48}
+                    width={48}
                   />
                 )}
               </NavigateWrapper>
@@ -297,10 +311,12 @@ export default function TweetCard({
         )}
         {tweet.file_link && (
           <div className="w-full">
-            <img
+            <Image
               src={tweet.file_link}
               alt="Attached file"
               className="w-full h-auto rounded-xl"
+              height={1920}
+              width={1080}
             />
           </div>
         )}
@@ -325,7 +341,9 @@ export default function TweetCard({
           <div
             onClick={(e) => {
               e.stopPropagation();
-              toggleLike(tweet.id);
+              if (tweet.id) {
+                toggleLike(tweet.id);
+              }
             }}
             className={`flex flex-row items-center justify-center cursor-pointer group ${
               liked ? "text-red-500 fill-red-500" : "text-gray-500"

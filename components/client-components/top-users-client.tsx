@@ -4,25 +4,16 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { followUser } from "@/app/api/actions/followUser";
 import { usePathname } from "next/navigation";
-
-interface User {
-  id: string;
-  username: string;
-  first_name: string;
-  last_name: string;
-  pfp_link: string | null;
-  isFollowing: boolean;
-}
-
-interface TopUsersClientProps {
-  users: User[];
-  currentUserId: string;
-}
+import Image from "next/image";
+import { User } from "../types/user";
 
 export default function TopUsersClient({
   users,
   currentUserId,
-}: TopUsersClientProps) {
+}: {
+  users: User[];
+  currentUserId: string;
+}) {
   const [followStates, setFollowStates] = useState<Record<string, boolean>>(
     users.reduce((acc, user) => ({ ...acc, [user.id]: user.isFollowing }), {})
   );
@@ -68,10 +59,12 @@ export default function TopUsersClient({
           >
             <div className="w-10 h-10 rounded-full flex-none">
               {user.pfp_link ? (
-                <img
+                <Image
                   src={user.pfp_link}
                   alt={user.username || "User"}
                   className="w-10 h-10 rounded-full object-cover"
+                  height={48}
+                  width={48}
                 />
               ) : (
                 <div className="w-10 h-10 bg-neutral-600 rounded-full"></div>
