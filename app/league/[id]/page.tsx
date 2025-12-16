@@ -3,6 +3,7 @@ import LeftSidebar from "@/components/LeftSidebar";
 import RightSection from "@/components/RightSection";
 import BackButton from "@/components/ui/back-button";
 import { createClient } from "@/lib/supabase/server";
+import InviteButton from "@/components/client-components/invite-button";
 
 export default async function LeaguePage({
   params,
@@ -77,6 +78,9 @@ export default async function LeaguePage({
   const avatar_link = managerProfile?.pfp_link ?? null;
   const username = managerProfile?.username ?? null;
 
+  const { data: viewer } = await supabase.auth.getUser();
+  const isAdmin = viewer?.user?.id === league.admin_id;
+
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[80vw] w-full h-full flex relative">
@@ -103,6 +107,8 @@ export default async function LeaguePage({
               League Manager: {managerProfile?.username ?? "Unknown"}
             </h1>
           </div>
+          {isAdmin && <InviteButton leagueId={league.id} />}
+
           <LeagueTabs betSlips={betSlips} />
         </main>
         <RightSection />
