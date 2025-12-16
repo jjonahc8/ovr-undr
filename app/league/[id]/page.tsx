@@ -3,27 +3,15 @@ import LeftSidebar from "@/components/LeftSidebar";
 import RightSection from "@/components/RightSection";
 import BackButton from "@/components/ui/back-button";
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 
-export default async function LeaguePage() {
+export default async function LeaguePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
   const supabase = await createClient();
-
-  const { data: authClaims, error: claimsError } =
-    await supabase.auth.getClaims();
-  if (claimsError || !authClaims?.claims) redirect("/auth/login");
-
-  const userId = authClaims.claims.sub;
-
-  const { data: authProfileData, error: authProfileError } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
-
-  if (authProfileError || !authProfileData) {
-    console.error("Error fetching profile:", authProfileError);
-    return;
-  }
 
   const { data: trendingTweets, error: trendingTweetsError } = await supabase
     .from("tweets_with_like_count")
@@ -34,8 +22,60 @@ export default async function LeaguePage() {
     console.error("Error fetching trending tweets:", trendingTweetsError);
   }
 
-  const avatar_link = authProfileData.pfp_link ?? null;
-  const username = authProfileData.username ?? null;
+  const { data: league, error: leagueError } = await supabase
+    .from("leagues")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (leagueError || !league) {
+    console.error("Error fetching league:", leagueError);
+    return;
+  }
+
+  const { data: managerProfile, error: managerError } = await supabase
+    .from("profiles")
+    .select("username,pfp_link")
+    .eq("id", league.admin_id)
+    .single();
+
+  if (managerError) {
+    console.error("Error fetching manager profile:", managerError);
+  }
+
+  const { data: playerOdds, error: playerOddsError } = await supabase
+    .from("betting_odds")
+    .select("*")
+    .not("player_id", "is", null)
+    .limit(5);
+
+  if (playerOddsError) {
+    console.error("Error fetching odds data", playerOddsError);
+  }
+
+  const betSlips =
+    playerOdds?.map(
+      ({
+        home_team,
+        away_team,
+        player_name,
+        market_key,
+        price,
+        point,
+        player_id,
+      }) => ({
+        home_team,
+        away_team,
+        player_name,
+        market_key,
+        price,
+        point,
+        player_id,
+      })
+    ) ?? [];
+
+  const avatar_link = managerProfile?.pfp_link ?? null;
+  const username = managerProfile?.username ?? null;
 
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
@@ -50,7 +90,7 @@ export default async function LeaguePage() {
           <div className="flex flex-row items-center mt-4 mb-2 ml-2">
             <BackButton />
             <h1 className="text-xl font-bold px-6 backdrop-blur bg-black/10 sticky top-0">
-              League Name
+              {league.name}
             </h1>
           </div>
           <div className="relative inline-block">
@@ -58,12 +98,12 @@ export default async function LeaguePage() {
             <div className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full bg-slate-50"></div>
           </div>
           <div className="flex flex-col pt-20 pb-4 px-4 border-b-[0.5px] border-gray-600">
-            <h1 className="text-2xl font-bold">League Name</h1>
+            <h1 className="text-2xl font-bold">{league.name}</h1>
             <h1 className="text-sm text-gray-400">
-              League Manager: League Manager Username
+              League Manager: {managerProfile?.username ?? "Unknown"}
             </h1>
           </div>
-          <LeagueTabs />
+          <LeagueTabs betSlips={betSlips} />
         </main>
         <RightSection />
       </div>

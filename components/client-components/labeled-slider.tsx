@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface LabeledSliderProps {
   label: string;
@@ -8,6 +8,7 @@ interface LabeledSliderProps {
   max: number;
   step?: number;
   defaultValue?: number;
+  onChange?: (value: number) => void;
 }
 
 export default function LabeledSlider({
@@ -16,8 +17,18 @@ export default function LabeledSlider({
   max,
   step = 1,
   defaultValue = min,
+  onChange,
 }: LabeledSliderProps) {
-  const [value, setValue] = useState(defaultValue);
+  const clamp = (v: number) => Math.min(max, Math.max(min, v));
+  const [value, setValue] = useState(() => clamp(defaultValue));
+
+  // Keep slider value valid if min/max/defaultValue changes after mount
+  useEffect(() => {
+    const next = clamp(defaultValue);
+    setValue(next);
+    onChange?.(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [min, max, defaultValue]);
 
   return (
     <div className="w-full">
@@ -32,7 +43,11 @@ export default function LabeledSlider({
           max={max}
           step={step}
           value={value}
-          onChange={(e) => setValue(Number(e.target.value))}
+          onChange={(e) => {
+            const next = Number(e.target.value);
+            setValue(next);
+            onChange?.(next);
+          }}
           className="w-full accent-white"
         />
         <span className="text-lg font-bold">{value}</span>

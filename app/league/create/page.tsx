@@ -1,10 +1,9 @@
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSection from "@/components/RightSection";
 import BackButton from "@/components/ui/back-button";
-import LabeledSlider from "@/components/client-components/labeled-slider";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import LeagueNameInput from "@/components/client-components/league-name-input";
+import LeagueInput from "@/components/client-components/league-name-input";
 
 export default async function CreatePage() {
   const supabase = await createClient();
@@ -51,29 +50,7 @@ export default async function CreatePage() {
             </h1>
           </div>
           <div className="flex flex-col mt-10">
-            <LeagueNameInput />
-            <div className="flex flex-col font-semibold mt-4 mx-6 gap-4">
-              <LabeledSlider
-                label="How many players?"
-                min={2}
-                max={12}
-                defaultValue={4}
-              />
-              <LabeledSlider
-                label="How many weeks?"
-                min={1}
-                max={17}
-                defaultValue={17}
-              />
-            </div>
-            <div className="text-center mt-6">
-              <button
-                className="text-2xl font-semibold rounded-full border-[0.5px] border-white hover:bg-white 
-          hover:text-black transition duration-200 px-4 py-2"
-              >
-                Create League
-              </button>
-            </div>
+            <LeagueInput />
           </div>
         </main>
         <RightSection />

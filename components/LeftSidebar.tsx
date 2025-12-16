@@ -6,6 +6,25 @@ import NavigateWrapper from "./client-components/navigate";
 import TrendingWindow from "./client-components/trending-window";
 import { TrendingTweetView } from "./types/trendingtweets";
 import Image from "next/image";
+import React from "react";
+
+function Avatar({ src }: { src: string }) {
+  const [finalSrc, setFinalSrc] = React.useState(src);
+
+  React.useEffect(() => {
+    setFinalSrc(`${src}?v=${Date.now()}`); // runs ONLY on client
+  }, [src]);
+
+  return (
+    <Image
+      className="rounded-full min-w-6 w-6 min-h-6 h-6"
+      src={finalSrc}
+      alt="profile avatar"
+      width={48}
+      height={48}
+    />
+  );
+}
 
 export function LeftSidebar({
   avatar_link,
@@ -42,13 +61,7 @@ export function LeftSidebar({
                     {!avatar_link ? (
                       <div className="w-6 h-6 bg-slate-400 rounded-full" />
                     ) : (
-                      <Image
-                        className="rounded-full min-w-6 w-6 min-h-6 h-6"
-                        src={`${avatar_link}?v=${Date.now()}`}
-                        alt="profile avatar"
-                        width={48}
-                        height={48}
-                      />
+                      <Avatar src={avatar_link} />
                     )}
                   </div>
                   <h2 className="font-semibold">{username}:</h2>
