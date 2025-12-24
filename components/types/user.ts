@@ -4,5 +4,5 @@ export interface User {
   first_name: string;
   last_name: string;
   pfp_link: string | null;
-  isFollowing: boolean;
+  isFollowing?: boolean;
 }
