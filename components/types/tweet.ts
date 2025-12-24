@@ -11,7 +11,7 @@ export interface Tweet {
 export interface ParentTweet {
   id: string | null;
   text: string | null;
-  created_at: string | null;
+  created_at: string;
   user_id: string | null;
   author: string | null;
   file_link: string | null;
