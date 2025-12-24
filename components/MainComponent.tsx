@@ -12,16 +12,16 @@ const MainComponent = async function (
   const timelineLength = tweetsAuthorsParents?.length;
 
   const parentMap = new Map(
-    tweetsAuthorsParents?.map((tAP) => [
-      tAP.parent_tweet_id,
+    (tweetsAuthorsParents ?? []).map((tAP) => [
+      tAP.parent_tweet_id ?? "",
       {
-        id: tAP.parent_tweet_id,
-        text: tAP.parent_text,
-        created_at: tAP.parent_created_at,
-        user_id: tAP.parent_user_id,
+        id: tAP.parent_tweet_id ?? "",
+        text: tAP.parent_text ?? "",
+        created_at: tAP.parent_created_at ?? "",
+        user_id: tAP.parent_user_id ?? "",
         parent_id: null,
-        author: tAP.parent_author_username,
-        file_link: tAP.parent_file_link,
+        author: tAP.parent_author_username ?? "",
+        file_link: tAP.parent_file_link ?? "",
       },
     ])
   );
