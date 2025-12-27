@@ -1,8 +1,10 @@
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSection from "@/components/RightSection";
+import TopUsers from "@/components/server-components/top-users";
 import BackButton from "@/components/ui/back-button";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 type SidebarLeague = {
   id: string;
@@ -174,7 +176,24 @@ export default async function LeaderboardPage() {
             </div>
           </div>
         </main>
-        <RightSection trendingTweets={trendingTweets} leaderboard={true} />
+        <RightSection
+          topUsersComponent={
+            <Suspense
+              fallback={
+                <div className="rounded-xl border-gray-600 border-[0.5px]">
+                  <h3 className="text-left font-bold text-xl pt-4 pb-2 px-4">
+                    You might know
+                  </h3>
+                  <div className="p-4 text-center text-gray-500">
+                    Loading...
+                  </div>
+                </div>
+              }
+            >
+              <TopUsers currentUserId={userId ?? ""} />
+            </Suspense>
+          }
+        />
       </div>
     </div>
   );
