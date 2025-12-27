@@ -3,12 +3,24 @@
 import { useState } from "react";
 import { createLeagueInvite } from "@/components/server-components/create-league-invite";
 
-export default function InviteButton({ leagueId }: { leagueId: string }) {
+export default function InviteButton({
+  leagueId,
+  memberCount,
+  maxPlayers,
+}: {
+  leagueId: string;
+  memberCount: number;
+  maxPlayers: number;
+}) {
   const [loading, setLoading] = useState(false);
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const isFull = memberCount >= maxPlayers;
+
   const handleCreate = async () => {
+    if (isFull) return;
+
     setError(null);
     setLoading(true);
 
@@ -49,13 +61,17 @@ export default function InviteButton({ leagueId }: { leagueId: string }) {
     <div className="px-4 py-4 border-b-[0.5px] border-gray-600">
       <button
         onClick={handleCreate}
-        disabled={loading}
+        disabled={loading || isFull}
         className="w-full py-2 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition disabled:opacity-50"
       >
-        {loading ? "Creating invite..." : "Create Invite Link"}
+        {isFull
+          ? `League is full (${memberCount}/${maxPlayers})`
+          : loading
+          ? "Creating invite..."
+          : "Create Invite Link"}
       </button>
 
-      {inviteUrl && (
+      {inviteUrl && !isFull && (
         <div className="mt-3 flex flex-col gap-2">
           <div className="text-xs text-gray-400 break-all">{inviteUrl}</div>
           <div className="flex gap-2">

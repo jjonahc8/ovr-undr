@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type MarketKey = string;
 
@@ -13,7 +13,23 @@ type BetSlipItem = {
   point: number;
 };
 
-export default function LeagueTabs({ betSlips }: { betSlips: BetSlipItem[] }) {
+type LeaderboardMember = {
+  player_id: string;
+  wins?: number | null;
+  losses?: number | null;
+  points?: number | null;
+  profiles?: {
+    username: string | null;
+  } | null;
+};
+
+export default function LeagueTabs({
+  betSlips,
+  leaderboardMembers,
+}: {
+  betSlips: BetSlipItem[];
+  leaderboardMembers: LeaderboardMember[];
+}) {
   const [activeTab, setActiveTab] = useState<"matchup" | "leaderboard">(
     "matchup"
   );
@@ -26,16 +42,13 @@ export default function LeagueTabs({ betSlips }: { betSlips: BetSlipItem[] }) {
 
   const handleSelect = (key: string, value: "over" | "under") => {
     setLocked(false);
-
     setSelections((prev) => ({
       ...prev,
       [key]: prev[key] === value ? null : value,
     }));
   };
 
-  const handleLockIn = () => {
-    setLocked(true);
-  };
+  const handleLockIn = () => setLocked(true);
 
   const allSelected =
     betSlips.length > 0 &&
@@ -43,6 +56,14 @@ export default function LeagueTabs({ betSlips }: { betSlips: BetSlipItem[] }) {
       const key = `${item.player_id}-${item.market_key}`;
       return selections[key] === "over" || selections[key] === "under";
     });
+
+  const sortedLeaderboard = useMemo(() => {
+    return [...leaderboardMembers].sort((a, b) => {
+      const ap = a.points ?? 0;
+      const bp = b.points ?? 0;
+      return bp - ap;
+    });
+  }, [leaderboardMembers]);
 
   return (
     <div className="flex flex-col">
@@ -152,10 +173,8 @@ export default function LeagueTabs({ betSlips }: { betSlips: BetSlipItem[] }) {
           </div>
         )}
 
-        {/* LEADERBOARD TAB */}
         {activeTab === "leaderboard" && (
           <div>
-            <h2 className="text-xl font-bold mb-2">Leaderboard</h2>
             <div className="overflow-x-auto">
               <table className="w-full border-collapse border border-gray-600 rounded-lg">
                 <thead>
@@ -173,32 +192,38 @@ export default function LeagueTabs({ betSlips }: { betSlips: BetSlipItem[] }) {
                     </th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  <tr>
-                    <td className="px-4 py-2 border-b border-gray-700">1</td>
-                    <td className="px-4 py-2 border-b border-gray-700">
-                      Alice
-                    </td>
-                    <td className="px-4 py-2 border-b border-gray-700">5</td>
-                    <td className="px-4 py-2 border-b border-gray-700">0</td>
-                    <td className="px-4 py-2 border-b border-gray-700">120</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border-b border-gray-700">2</td>
-                    <td className="px-4 py-2 border-b border-gray-700">Bob</td>
-                    <td className="px-4 py-2 border-b border-gray-700">3</td>
-                    <td className="px-4 py-2 border-b border-gray-700">2</td>
-                    <td className="px-4 py-2 border-b border-gray-700">95</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border-b border-gray-700">3</td>
-                    <td className="px-4 py-2 border-b border-gray-700">
-                      Charlie
-                    </td>
-                    <td className="px-4 py-2 border-b border-gray-700">1</td>
-                    <td className="px-4 py-2 border-b border-gray-700">4</td>
-                    <td className="px-4 py-2 border-b border-gray-700">60</td>
-                  </tr>
+                  {sortedLeaderboard.map((m, idx) => (
+                    <tr key={m.player_id} className="hover:bg-white/5">
+                      <td className="px-4 py-2 border-b border-gray-700">
+                        {idx + 1}
+                      </td>
+                      <td className="px-4 py-2 border-b border-gray-700">
+                        {m.profiles?.username ?? "Unknown"}
+                      </td>
+                      <td className="px-4 py-2 border-b border-gray-700">
+                        {m.wins ?? 0}
+                      </td>
+                      <td className="px-4 py-2 border-b border-gray-700">
+                        {m.losses ?? 0}
+                      </td>
+                      <td className="px-4 py-2 border-b border-gray-700">
+                        {m.points ?? 0}
+                      </td>
+                    </tr>
+                  ))}
+
+                  {sortedLeaderboard.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="px-4 py-6 text-center text-gray-400"
+                      >
+                        No league members found.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

@@ -34,6 +34,32 @@ export default async function LeaguePage({
     return;
   }
 
+  const { count: memberCount, error: memberCountError } = await supabase
+    .from("league_members")
+    .select("id", { count: "exact", head: true })
+    .eq("league_id", league.id);
+
+  if (memberCountError) {
+    console.error("Error counting league members:", memberCountError);
+  }
+
+  const { data: viewerRes, error: viewerError } = await supabase.auth.getUser();
+  if (viewerError) console.error("Error getting viewer:", viewerError);
+
+  const viewer = viewerRes?.user ?? null;
+
+  const { data: viewerProfile, error: viewerProfileError } = viewer?.id
+    ? await supabase
+        .from("profiles")
+        .select("username,pfp_link")
+        .eq("id", viewer.id)
+        .single()
+    : { data: null, error: null };
+
+  if (viewerProfileError) {
+    console.error("Error fetching viewer profile:", viewerProfileError);
+  }
+
   const { data: managerProfile, error: managerError } = await supabase
     .from("profiles")
     .select("username,pfp_link")
@@ -75,11 +101,27 @@ export default async function LeaguePage({
       })
     ) ?? [];
 
-  const avatar_link = managerProfile?.pfp_link ?? null;
-  const username = managerProfile?.username ?? null;
+  const { data: leaderboardMembers, error: leaderboardError } = await supabase
+    .from("league_members")
+    .select(`player_id, profiles:player_id (username)`)
+    .eq("league_id", id);
 
-  const { data: viewer } = await supabase.auth.getUser();
-  const isAdmin = viewer?.user?.id === league.admin_id;
+  if (leaderboardError) {
+    console.error("Error fetching leaderboard:", leaderboardError);
+  }
+
+  const formattedLeaderboardMembers =
+    leaderboardMembers?.map((member) => ({
+      player_id: member.player_id,
+      profiles: Array.isArray(member.profiles)
+        ? member.profiles[0]
+        : member.profiles,
+    })) ?? [];
+
+  const avatar_link = viewerProfile?.pfp_link ?? null;
+  const username = viewerProfile?.username ?? null;
+
+  const isAdmin = viewer?.id === league.admin_id;
 
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
@@ -90,6 +132,7 @@ export default async function LeaguePage({
           username={username}
           league={true}
         />
+
         <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <div className="flex flex-row items-center mt-4 mb-2 ml-2">
             <BackButton />
@@ -97,20 +140,33 @@ export default async function LeaguePage({
               {league.name}
             </h1>
           </div>
+
           <div className="relative inline-block">
             <div className="w-full h-40 bg-slate-400 mt-3"></div>
             <div className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full bg-slate-50"></div>
           </div>
+
           <div className="flex flex-col pt-20 pb-4 px-4 border-b-[0.5px] border-gray-600">
             <h1 className="text-2xl font-bold">{league.name}</h1>
             <h1 className="text-sm text-gray-400">
               League Manager: {managerProfile?.username ?? "Unknown"}
             </h1>
           </div>
-          {isAdmin && <InviteButton leagueId={league.id} />}
 
-          <LeagueTabs betSlips={betSlips} />
+          {isAdmin && league.max_players != null && (
+            <InviteButton
+              leagueId={league.id}
+              memberCount={memberCount ?? 0}
+              maxPlayers={league.max_players}
+            />
+          )}
+
+          <LeagueTabs
+            betSlips={betSlips}
+            leaderboardMembers={formattedLeaderboardMembers}
+          />
         </main>
+
         <RightSection />
       </div>
     </div>
