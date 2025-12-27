@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import LabeledSlider from "./labeled-slider";
 import { getNFLWeek } from "../utilities/generateNFLWeek";
 import { createLeague } from "@/app/api/actions/create-league";
+import { v4 as uuidv4 } from "uuid";
 
 export default function LeagueInput() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function LeagueInput() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const id = uuidv4();
 
   const maxChars = 20;
 
@@ -31,6 +33,7 @@ export default function LeagueInput() {
     setLoading(true);
 
     const res = await createLeague({
+      id: id,
       name: leagueName,
       maxPlayers,
       lastWeek,
@@ -46,7 +49,7 @@ export default function LeagueInput() {
 
     // If you have a league page route, push to it:
     // router.push(`/league/${res.league.id}`);
-    router.push("/protected"); // or wherever you want after creating
+    router.push(`/league/${id}`); // or wherever you want after creating
   };
 
   return (

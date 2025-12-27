@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 
 export type CreateLeagueInput = {
+  id: string;
   name: string;
   maxPlayers: number;
   lastWeek: number;
@@ -34,13 +35,15 @@ export async function createLeague(
   }
 
   const name = input.name.trim();
+  const id = input.id;
   if (!name) return { ok: false, error: "League name is required" };
 
   const p_max_players = clampInt(input.maxPlayers, 2, 12);
   const p_last_week = clampInt(input.lastWeek, 1, 17);
   const p_season = clampInt(input.season, 2000, 3000);
 
-  const { data, error } = await supabase.rpc("create_league_and_add_admin", {
+  const { data, error } = await supabase.rpc("create_league", {
+    p_id: id,
     p_name: name,
     p_max_players,
     p_last_week,
@@ -53,7 +56,7 @@ export async function createLeague(
       message: error.message,
       code: (error as { code?: string }).code,
       userId: user.id,
-      input: { name, p_max_players, p_last_week, p_season },
+      input: { id, name, p_max_players, p_last_week, p_season },
     });
 
     const msg =
