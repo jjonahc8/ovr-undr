@@ -4,6 +4,8 @@ import RightSection from "@/components/RightSection";
 import BackButton from "@/components/ui/back-button";
 import { createClient } from "@/lib/supabase/server";
 import InviteButton from "@/components/client-components/invite-button";
+import { Suspense } from "react";
+import TopUsers from "@/components/server-components/top-users";
 
 export default async function LeaguePage({
   params,
@@ -167,7 +169,24 @@ export default async function LeaguePage({
           />
         </main>
 
-        <RightSection />
+        <RightSection
+          topUsersComponent={
+            <Suspense
+              fallback={
+                <div className="rounded-xl border-gray-600 border-[0.5px]">
+                  <h3 className="text-left font-bold text-xl pt-4 pb-2 px-4">
+                    You might know
+                  </h3>
+                  <div className="p-4 text-center text-gray-500">
+                    Loading...
+                  </div>
+                </div>
+              }
+            >
+              <TopUsers currentUserId={viewer?.id ?? ""} />
+            </Suspense>
+          }
+        />
       </div>
     </div>
   );

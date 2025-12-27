@@ -4,6 +4,11 @@ import BackButton from "@/components/ui/back-button";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
+type SidebarLeague = {
+  id: string;
+  name: string;
+};
+
 export default async function LeaderboardPage() {
   const supabase = await createClient();
 
@@ -36,10 +41,45 @@ export default async function LeaderboardPage() {
   const avatar_link = authProfileData.pfp_link ?? null;
   const username = authProfileData.username ?? null;
 
+  const { data: authLeagues, error: authLeaguesErrors } = await supabase
+    .from("league_members")
+    .select("league_id")
+    .eq("player_id", authProfileData.id ?? "");
+
+  if (authLeaguesErrors) {
+    console.error("Error fetching auth leagues:", authLeaguesErrors);
+  }
+
+  let leaguesForSidebar: SidebarLeague[] = [];
+
+  if (authLeagues && authLeagues.length !== 0) {
+    const leagueIds = authLeagues
+      .map((m) => m.league_id)
+      .filter((id): id is string => typeof id === "string");
+
+    if (leagueIds.length > 0) {
+      const { data: leaguesData, error: leaguesError } = await supabase
+        .from("leagues")
+        .select("id,name")
+        .in("id", leagueIds);
+
+      if (leaguesError) {
+        console.error("Error fetching leagues:", leaguesError);
+      } else {
+        leaguesForSidebar =
+          leaguesData?.map((l) => ({ id: l.id, name: l.name })) ?? [];
+      }
+    }
+  }
+
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[80vw] w-full h-full flex relative">
-        <LeftSidebar avatar_link={avatar_link} username={username} />
+        <LeftSidebar
+          avatar_link={avatar_link}
+          username={username}
+          leagues={leaguesForSidebar}
+        />
         <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <div className="flex flex-row items-center mt-4 mb-4 ml-2">
             <BackButton />

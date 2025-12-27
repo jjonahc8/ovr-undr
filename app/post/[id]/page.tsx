@@ -10,6 +10,11 @@ import { Suspense } from "react";
 import FocusedTweet from "@/components/server-components/focused-tweet";
 import Image from "next/image";
 
+type SidebarLeague = {
+  id: string;
+  name: string;
+};
+
 export default async function PostPage(props: {
   params: Promise<{ id: string }>;
 }) {
@@ -40,10 +45,45 @@ export default async function PostPage(props: {
   const avatar_link: string | null = authProfile.pfp_link;
   const username: string | null = authProfile.username;
 
+  const { data: authLeagues, error: authLeaguesErrors } = await supabase
+    .from("league_members")
+    .select("league_id")
+    .eq("player_id", authProfile?.id ?? "");
+
+  if (authLeaguesErrors) {
+    console.error("Error fetching auth leagues:", authLeaguesErrors);
+  }
+
+  let leaguesForSidebar: SidebarLeague[] = [];
+
+  if (authLeagues && authLeagues.length !== 0) {
+    const leagueIds = authLeagues
+      .map((m) => m.league_id)
+      .filter((id): id is string => typeof id === "string");
+
+    if (leagueIds.length > 0) {
+      const { data: leaguesData, error: leaguesError } = await supabase
+        .from("leagues")
+        .select("id,name")
+        .in("id", leagueIds);
+
+      if (leaguesError) {
+        console.error("Error fetching leagues:", leaguesError);
+      } else {
+        leaguesForSidebar =
+          leaguesData?.map((l) => ({ id: l.id, name: l.name })) ?? [];
+      }
+    }
+  }
+
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
       <div className="max-w-[80vw] w-full h-full flex relative">
-        <LeftSidebar avatar_link={avatar_link} username={username} />
+        <LeftSidebar
+          avatar_link={avatar_link}
+          username={username}
+          leagues={leaguesForSidebar}
+        />
         <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <div className="flex flex-row items-center mt-4 mb-2 ml-2">
             <BackButton />

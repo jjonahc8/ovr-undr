@@ -7,12 +7,18 @@ import TrendingWindow from "./client-components/trending-window";
 import { TrendingTweetView } from "./types/trendingtweets";
 import Image from "next/image";
 import React from "react";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+
+type SidebarLeague = {
+  id: string;
+  name: string;
+};
 
 function Avatar({ src }: { src: string }) {
   const [finalSrc, setFinalSrc] = React.useState(src);
 
   React.useEffect(() => {
-    setFinalSrc(`${src}?v=${Date.now()}`); // runs ONLY on client
+    setFinalSrc(`${src}?v=${crypto.randomUUID()}`);
   }, [src]);
 
   return (
@@ -32,13 +38,53 @@ export function LeftSidebar({
   create,
   league,
   trendingTweets,
+  leagues,
 }: {
   avatar_link: string | null;
   username: string | null;
   create?: boolean;
   league?: boolean;
   trendingTweets?: TrendingTweetView[] | null;
+  leagues?: SidebarLeague[] | null;
 }) {
+  const safeLeagues = leagues ?? [];
+
+  const [leagueIndex, setLeagueIndex] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    if (safeLeagues.length === 0) {
+      setLeagueIndex(0);
+      return;
+    }
+    setLeagueIndex((i) => i % safeLeagues.length);
+  }, [safeLeagues.length]);
+
+  const currentLeague =
+    safeLeagues.length > 0 ? safeLeagues[leagueIndex] : null;
+
+  const leagueHref = currentLeague
+    ? `/league/${currentLeague.id}`
+    : "/league/create";
+
+  const leagueTitle = currentLeague?.name ?? "League Name";
+
+  const canCycle = safeLeagues.length > 1;
+
+  const cycleLeagueRight = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!canCycle) return;
+    setLeagueIndex((i) => (i + 1) % safeLeagues.length);
+  };
+
+  const cycleLeagueLeft = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!canCycle) return;
+
+    setLeagueIndex((i) => (i - 1 + safeLeagues.length) % safeLeagues.length);
+  };
+
   return (
     <section className="w-[35%] sticky top-0 flex flex-col h-screen">
       <NavigateWrapper to={"/"}>
@@ -52,10 +98,13 @@ export function LeftSidebar({
       <div className="flex-1 overflow-y-auto mr-6 mt-8">
         <div className="flex flex-col gap-4">
           {create ? (
-            <NavigateWrapper to={"/league/CHANGETHISTOLEAGUEID"}>
+            <NavigateWrapper to={leagueHref}>
               <div className="flex flex-col items-center space-y-2 rounded-xl p-4 border-gray-600 border-[0.5px]">
                 <div className="rounded-full h-24 w-24 bg-gray-400" />
-                <h1 className="font-bold text-center text-2xl">League Name</h1>
+                <h1 className="font-bold text-center text-2xl">
+                  {leagueTitle}
+                </h1>
+
                 <div className="flex flex-row items-center justify-center gap-1">
                   <div className="mr-[0.5px]">
                     {!avatar_link ? (
@@ -67,9 +116,36 @@ export function LeftSidebar({
                   <h2 className="font-semibold">{username}:</h2>
                   <h1 className="font-bold text-xl">Xth</h1>
                 </div>
-                <button className="w-32 h-10 rounded-full font-semibold border-gray-600 border-[0.5px]">
-                  Leaderboard
-                </button>
+
+                <div className="flex gap-2">
+                  {canCycle ? (
+                    <button
+                      type="button"
+                      onClick={cycleLeagueLeft}
+                      className="flex items-center justify-center w-10 h-10 rounded-full font-semibold border-gray-600 border-[0.5px]"
+                      aria-label="Prev league"
+                      title="Prev league"
+                    >
+                      <FaArrowLeft />
+                    </button>
+                  ) : null}
+
+                  <button className="w-32 h-10 rounded-full font-semibold border-gray-600 border-[0.5px]">
+                    Leaderboard
+                  </button>
+
+                  {canCycle ? (
+                    <button
+                      type="button"
+                      onClick={cycleLeagueRight}
+                      className="flex items-center justify-center w-10 h-10 rounded-full font-semibold border-gray-600 border-[0.5px]"
+                      aria-label="Next league"
+                      title="Next league"
+                    >
+                      <FaArrowRight />
+                    </button>
+                  ) : null}
+                </div>
               </div>
             </NavigateWrapper>
           ) : league ? (
@@ -103,10 +179,13 @@ export function LeftSidebar({
           {create || league ? (
             <TrendingWindow trendingTweets={trendingTweets} />
           ) : (
-            <NavigateWrapper to={"/league/CHANGETHISTOLEAGUEID"}>
+            <NavigateWrapper to={leagueHref}>
               <div className="flex flex-col items-center space-y-2 rounded-xl p-4 border-gray-600 border-[0.5px]">
                 <div className="rounded-full h-24 w-24 bg-gray-400" />
-                <h1 className="font-bold text-center text-2xl">League Name</h1>
+                <h1 className="font-bold text-center text-2xl">
+                  {leagueTitle}
+                </h1>
+
                 <div className="flex flex-row items-center justify-center gap-1">
                   <div className="mr-[0.5px]">
                     {!avatar_link ? (
@@ -114,7 +193,7 @@ export function LeftSidebar({
                     ) : (
                       <Image
                         className="rounded-full min-w-6 w-6 min-h-6 h-6"
-                        src={`${avatar_link}`}
+                        src={avatar_link}
                         alt="profile avatar"
                         width={48}
                         height={48}
@@ -124,16 +203,43 @@ export function LeftSidebar({
                   <h2 className="font-semibold">{username}:</h2>
                   <h1 className="font-bold text-xl">Xth</h1>
                 </div>
-                <button className="w-32 h-10 rounded-full font-semibold border-gray-600 border-[0.5px]">
-                  Leaderboard
-                </button>
+
+                <div className="flex gap-2">
+                  {canCycle ? (
+                    <button
+                      type="button"
+                      onClick={cycleLeagueLeft}
+                      className="flex items-center justify-center w-10 h-10 rounded-full font-semibold border-gray-600 border-[0.5px]"
+                      aria-label="Prev league"
+                      title="Prev league"
+                    >
+                      <FaArrowLeft />
+                    </button>
+                  ) : null}
+
+                  <button className="w-32 h-10 rounded-full font-semibold border-gray-600 border-[0.5px]">
+                    Leaderboard
+                  </button>
+
+                  {canCycle ? (
+                    <button
+                      type="button"
+                      onClick={cycleLeagueRight}
+                      className="flex items-center justify-center w-10 h-10 rounded-full font-semibold border-gray-600 border-[0.5px]"
+                      aria-label="Next league"
+                      title="Next league"
+                    >
+                      <FaArrowRight />
+                    </button>
+                  ) : null}
+                </div>
               </div>
             </NavigateWrapper>
           )}
         </div>
       </div>
 
-      <NavigateWrapper to={`/${username}`}>
+      <NavigateWrapper to={`/${username ?? ""}`}>
         <div
           className="rounded-full flex items-center space-x-2 bg-transparent p-4 mr-6 text-center 
                      hover:bg-white/10 transition duration-200 justify-between"
@@ -145,7 +251,7 @@ export function LeftSidebar({
               ) : (
                 <Image
                   className="rounded-full min-w-10 w-10 min-h-10 h-10"
-                  src={`${avatar_link}`}
+                  src={avatar_link}
                   alt="profile avatar"
                   width={48}
                   height={48}
