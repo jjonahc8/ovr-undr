@@ -25,7 +25,7 @@ export default function LeagueInput() {
   useEffect(() => {
     const wk = getNFLWeek(new Date(), 2025) ?? 1;
     setMinLastWeek(wk);
-    setLastWeek(17);
+    setLastWeek(18);
   }, []);
 
   const handleCreate = async () => {
@@ -80,8 +80,8 @@ export default function LeagueInput() {
         <LabeledSlider
           label="Last week of league?"
           min={minLastWeek}
-          max={17}
-          defaultValue={17}
+          max={18}
+          defaultValue={18}
           onChange={(v: number) => setLastWeek(v)}
         />
       </div>

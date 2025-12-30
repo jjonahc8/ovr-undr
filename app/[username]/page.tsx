@@ -123,7 +123,7 @@ export default async function UserPage(props: {
           leagues={leaguesForSidebar}
         />
 
-        <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
+        <main className="sticky top-0 flex w-[100%] md:w-[65%] xl:w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <ProfileCard
             authProfile={authProfile}
             profileUser={profileUser}

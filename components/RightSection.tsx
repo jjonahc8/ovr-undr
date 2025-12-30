@@ -14,7 +14,7 @@ export default function RightSection({
   topUsersComponent?: React.ReactNode;
 }) {
   return (
-    <section className="w-[30%] flex-col space-y-4 items-stretch h-screen ml-6 sticky top-0 overflow-scroll">
+    <section className="w-[30%] hidden xl:flex flex-col space-y-4 items-stretch h-screen ml-6 sticky top-0 overflow-scroll">
       <div className="sticky top-0 bg-black">
         <div className="pt-2">
           <div className="relative w-full h-full group">
@@ -40,12 +40,12 @@ export default function RightSection({
           <TrendingWindow trendingTweets={trendingTweets} />
         ) : (
           <NavigateWrapper to={"/leaderboard/CHANGETHISTOLEADERBOARDID"}>
-            <div className="flex flex-col rounded-xl border-gray-600 border-[0.5px]">
-              <h3 className="text-center font-bold text-xl pt-4 pb-3 px-4">
+            <div className="flex flex-col rounded-xl border-gray-600 border-[0.5px] p-4">
+              <h3 className="text-center font-bold text-xl mb-3">
                 🏆 Best Pickers
               </h3>
 
-              <div className="flex flex-col gap-3 px-4">
+              <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="text-xl">🥇</span>
@@ -73,7 +73,7 @@ export default function RightSection({
                   <span className="text-sm text-gray-400">985 pts</span>
                 </div>
 
-                <button className="w-32 h-10 rounded-full font-semibold border-gray-600 border-[0.5px] mt-2 mb-4 hover:bg-gray-800 transition-colors mx-auto">
+                <button className="w-28 h-10 rounded-full font-semibold border-gray-600 border-[0.5px] hover:bg-gray-800 transition-colors mt-2 mx-auto">
                   View All
                 </button>
               </div>

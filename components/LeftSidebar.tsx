@@ -137,10 +137,6 @@ export function LeftSidebar({
           </button>
         ) : null}
 
-        <button className="w-32 h-10 rounded-full font-semibold border-gray-600 border-[0.5px] hover:bg-white/10 transition duration-200">
-          Leaderboard
-        </button>
-
         {canCycle ? (
           <button
             type="button"
@@ -157,7 +153,7 @@ export function LeftSidebar({
   );
 
   return (
-    <section className="w-[35%] sticky top-0 flex flex-col h-screen">
+    <section className="w-[35%] sticky top-0 hidden md:flex flex-col h-screen">
       <NavigateWrapper to={"/"}>
         <div className="text-3xl font-bold rounded-xl w-fit mt-4 mr-6">
           <h1 className="bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent">
@@ -220,7 +216,7 @@ export function LeftSidebar({
 
       <NavigateWrapper to={`/${username ?? ""}`}>
         <div
-          className="rounded-full flex items-center space-x-2 bg-transparent p-4 mr-6 text-center 
+          className="rounded-xl flex items-center space-x-2 bg-transparent p-4 mr-6 text-center 
                      hover:bg-white/10 transition duration-200 justify-between"
         >
           <div className="flex items-center w-full justify-between">

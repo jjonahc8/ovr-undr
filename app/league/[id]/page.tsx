@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import InviteButton from "@/components/client-components/invite-button";
 import { Suspense } from "react";
 import TopUsers from "@/components/server-components/top-users";
+import LeaveLeagueButton from "@/components/client-components/leave-league-button";
 
 export default async function LeaguePage({
   params,
@@ -135,7 +136,7 @@ export default async function LeaguePage({
           league={true}
         />
 
-        <main className="sticky top-0 flex min-w-[45%] max-w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
+        <main className="sticky top-0 flex w-[100%] md:w-[65%] xl:w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <div className="flex flex-row items-center mt-4 mb-2 ml-2">
             <BackButton />
             <h1 className="text-xl font-bold px-6 backdrop-blur bg-black/10 sticky top-0">
@@ -147,12 +148,17 @@ export default async function LeaguePage({
             <div className="w-full h-40 bg-slate-400 mt-3"></div>
             <div className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full bg-slate-50"></div>
           </div>
+          <div className="flex flex-row items-center justify-between border-b-[0.5px] border-gray-600 pt-20 pb-4 px-4">
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-bold">{league.name}</h1>
+              <h1 className="text-sm text-gray-400">
+                League Manager: {managerProfile?.username ?? "Unknown"}
+              </h1>
+            </div>
 
-          <div className="flex flex-col pt-20 pb-4 px-4 border-b-[0.5px] border-gray-600">
-            <h1 className="text-2xl font-bold">{league.name}</h1>
-            <h1 className="text-sm text-gray-400">
-              League Manager: {managerProfile?.username ?? "Unknown"}
-            </h1>
+            <div className="">
+              <LeaveLeagueButton leagueId={league.id} isAdmin={isAdmin} />
+            </div>
           </div>
 
           {isAdmin && league.max_players != null && (
