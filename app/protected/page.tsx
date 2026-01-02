@@ -69,14 +69,14 @@ export default async function ProtectedPage() {
 
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
-      <div className="max-w-[80vw] w-full h-full flex relative">
+      <div className="max-w-[80vw] w-full h-full flex relative justify-center">
         <LeftSidebar
           avatar_link={avatar_link}
           username={username}
           leagues={leaguesForSidebar}
         />
 
-        <main className="sticky top-0 flex w-[100%] md:w-[65%] xl:w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
+        <main className="sticky top-0 flex w-[90%] md:w-[55%] xl:w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <ScrollableHeader />
 
           <div className="border-t-[0.5px] border-b-[0.5px] border-gray-600">

@@ -7,6 +7,9 @@ import InviteButton from "@/components/client-components/invite-button";
 import { Suspense } from "react";
 import TopUsers from "@/components/server-components/top-users";
 import LeaveLeagueButton from "@/components/client-components/leave-league-button";
+import Image from "next/image";
+import { submitLeagueChanges } from "@/app/api/actions/submit-league-changes";
+import LeagueBannerTrigger from "@/components/client-components/league-banner-trigger";
 
 export default async function LeaguePage({
   params,
@@ -126,9 +129,23 @@ export default async function LeaguePage({
 
   const isAdmin = viewer?.id === league.admin_id;
 
+  const { data: adminProfile, error: adminProfileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", league.admin_id)
+    .single();
+
+  if (adminProfileError) {
+    console.error("Error fetching admin user data:", adminProfileError);
+  }
+
+  const admin_avatar_link: string | null = adminProfile?.pfp_link ?? null;
+
+  const submitForThisLeague = submitLeagueChanges.bind(null, league.id);
+
   return (
     <div className="w-full h-full flex justify-center text-white items-center relative bg-black">
-      <div className="max-w-[80vw] w-full h-full flex relative">
+      <div className="max-w-[80vw] w-full h-full flex relative justify-center">
         <LeftSidebar
           trendingTweets={trendingTweets}
           avatar_link={avatar_link}
@@ -136,7 +153,7 @@ export default async function LeaguePage({
           league={true}
         />
 
-        <main className="sticky top-0 flex w-[100%] md:w-[65%] xl:w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
+        <main className="sticky top-0 flex w-[90%] md:w-[55%] xl:w-[45%] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <div className="flex flex-row items-center mt-4 mb-2 ml-2">
             <BackButton />
             <h1 className="text-xl font-bold px-6 backdrop-blur bg-black/10 sticky top-0">
@@ -145,19 +162,48 @@ export default async function LeaguePage({
           </div>
 
           <div className="relative inline-block">
-            <div className="w-full h-40 bg-slate-400 mt-3"></div>
-            <div className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full bg-slate-50"></div>
+            <div className="relative w-full h-40 mt-3 bg-slate-400 overflow-hidden">
+              {league.banner_link ? (
+                <Image
+                  src={league.banner_link}
+                  alt="League banner"
+                  height={1920}
+                  width={1080}
+                />
+              ) : null}
+            </div>
+
+            {admin_avatar_link && (
+              <Image
+                className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full"
+                src={admin_avatar_link}
+                alt="league admin profile picture"
+                height={1920}
+                width={1080}
+              />
+            )}
+            {!admin_avatar_link && (
+              <div className="absolute left-4 bottom-0 translate-y-1/2 w-32 h-32 rounded-full bg-slate-50"></div>
+            )}
           </div>
-          <div className="flex flex-row items-center justify-between border-b-[0.5px] border-gray-600 pt-20 pb-4 px-4">
+          <div className="flex justify-end px-4">
+            {isAdmin && (
+              <div className="mt-4">
+                <LeagueBannerTrigger
+                  submitLeagueChanges={submitForThisLeague}
+                />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-row items-center justify-between border-b-[0.5px] border-gray-600 pt-6 px-4">
             <div className="flex flex-col">
               <h1 className="text-2xl font-bold">{league.name}</h1>
               <h1 className="text-sm text-gray-400">
                 League Manager: {managerProfile?.username ?? "Unknown"}
               </h1>
-            </div>
-
-            <div className="">
-              <LeaveLeagueButton leagueId={league.id} isAdmin={isAdmin} />
+              <div className="my-4">
+                <LeaveLeagueButton leagueId={league.id} isAdmin={isAdmin} />
+              </div>
             </div>
           </div>
 

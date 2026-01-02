@@ -4,6 +4,7 @@ import leaveLeague from "@/app/api/actions/leave-league";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { createPortal } from "react-dom";
 
 type ToastState =
   | { open: false; message: ""; kind: "success" | "error" }
@@ -69,25 +70,31 @@ export default function LeaveLeagueButton({
   return (
     <>
       {/* Toast */}
-      {toast.open ? (
-        <div className="fixed top-4 right-4 z-[100]">
+      {toast.open &&
+        typeof window !== "undefined" &&
+        createPortal(
           <div
-            className={[
-              "min-w-[260px] max-w-[320px] rounded-xl border px-4 py-3 shadow-lg backdrop-blur",
-              toast.kind === "success"
-                ? "border-green-500/40 bg-black/70 text-green-300"
-                : "border-red-500/40 bg-black/70 text-red-300",
-            ].join(" ")}
-            role="status"
-            aria-live="polite"
+            className="fixed top-4 right-4 z-[9999] pointer-events-none 
+          animate-in fade-in slide-in-from-top-2 duration-200"
           >
-            <div className="text-sm font-semibold">
-              {toast.kind === "success" ? "Success" : "Error"}
+            <div
+              className={[
+                "min-w-[260px] max-w-[320px] rounded-xl border px-4 py-3 shadow-lg backdrop-blur",
+                toast.kind === "success"
+                  ? "border-green-500/40 bg-black/80 text-green-300"
+                  : "border-red-500/40 bg-black/80 text-red-300",
+              ].join(" ")}
+              role="status"
+              aria-live="polite"
+            >
+              <div className="text-sm font-semibold">
+                {toast.kind === "success" ? "Success" : "Error"}
+              </div>
+              <div className="text-sm opacity-90">{toast.message}</div>
             </div>
-            <div className="text-sm opacity-90">{toast.message}</div>
-          </div>
-        </div>
-      ) : null}
+          </div>,
+          document.body
+        )}
 
       {/* Button */}
       <button

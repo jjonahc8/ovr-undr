@@ -7,7 +7,7 @@ export default function Error({ error }: { error: Error }) {
   const router = useRouter();
 
   useEffect(() => {
-    console.error("Error in /protected:", error);
+    console.error("Error in /invite/[token]:", error);
   }, [error]);
 
   return (

@@ -7,7 +7,7 @@ export default function Error({ error }: { error: Error }) {
   const router = useRouter();
 
   useEffect(() => {
-    console.error("Error in /post/[id]:", error);
+    console.error("Error in /create:", error);
   }, [error]);
 
   return (

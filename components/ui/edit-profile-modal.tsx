@@ -63,7 +63,6 @@ export default function EditProfileModal({
       >
         <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* later make it so that when you open the form it fetches current values */}
           <div className="relative inline-block">
             {!bannerPreviewURL && (
               <>

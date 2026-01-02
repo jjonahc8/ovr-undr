@@ -101,7 +101,7 @@ export function LeftSidebar({
     useAvatarCacheBust: boolean;
   }) => (
     <div className="flex flex-col items-center space-y-2 rounded-xl p-4 border-gray-600 border-[0.5px]">
-      <div className="rounded-full h-24 w-24 bg-gray-400" />
+      <FaTrophy className="w-24 h-24" />
       <h1 className="font-bold text-center text-2xl">{leagueTitle}</h1>
 
       <div className="flex flex-row items-center justify-center gap-1">
